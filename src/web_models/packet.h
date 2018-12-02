@@ -7,23 +7,15 @@
 #ifndef SRC_WEB_MODELS_PACKET_H_
 #define SRC_WEB_MODELS_PACKET_H_
 
-#include <iostream>
-#include <stdlib.h>
 #include <stdint.h>
-#include <string>
 
-using namespace std;
 
-class packet {
+struct packet {
 
-	private:
 		uint16_t check_sum;
 		uint16_t len;
 		uint32_t seqno;
 		char data[500];
-	public:
-
-
 
 };
 

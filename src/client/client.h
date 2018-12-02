@@ -8,7 +8,11 @@
 #ifndef SRC_CLIENT_CLIENT_H_
 #define SRC_CLIENT_CLIENT_H_
 
-
+class Client {
+	public :
+		// adjust parameters according to arguments in server_main
+		void start_client();
+};
 
 
 

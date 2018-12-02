@@ -8,11 +8,14 @@
 #ifndef SRC_WEB_MODELS_DATAGRAM_H_
 #define SRC_WEB_MODELS_DATAGRAM_H_
 #include "packet.h"
+#include "ack_packet.h"
 class datagram {
 	private:
-		packet packet;
-		// to be discussed later.
-		int header;
+		struct packet packet;
+		struct ack_packet ack_packet;
+
+	public:
+		datagram(uint16_t len);
 
 };
 
