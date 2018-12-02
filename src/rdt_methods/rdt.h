@@ -1,9 +1,13 @@
 /*
- * rdt.cpp
+ * rdt.h
  *
  *  Created on: Dec 2, 2018
  *      Author: michael
  */
+
+#ifndef SRC_RDT_METHODS_RDT_H_
+#define SRC_RDT_METHODS_RDT_H_
+
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -15,3 +19,7 @@ class RDT {
 }
 
 
+
+
+
+#endif /* SRC_RDT_METHODS_RDT_H_ */
