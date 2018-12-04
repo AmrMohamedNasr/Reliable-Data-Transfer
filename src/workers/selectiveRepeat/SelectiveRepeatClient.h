@@ -11,10 +11,15 @@
 
 
 #include "../clientWorker.h"
-
+#include <map>
+#include <vector>
 class SelectiveRepeatClient : public ClientWorker {
 	private:
-	//Implemention Dependant.
+		uint32_t base_seq_no;
+		vector<pair<uint32_t, uint16_t>> wnd;
+		struct sockaddr_in src_addr;
+		bool error;
+		bool time_out;
 	public:
 		// Use constructor to take all needed info from upper class.
 		~SelectiveRepeatClient();

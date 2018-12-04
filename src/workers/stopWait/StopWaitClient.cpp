@@ -14,7 +14,7 @@
 #include "../../data_managers/DataSink.h"
 
 StopWaitClient::~StopWaitClient() {
-
+	free(&src_addr);
 }
 
 
@@ -28,7 +28,7 @@ void StopWaitClient::recv_message(int socketFd, DataSink sink) {
 		} else {
 			if (packet.len != 0) {
 				struct packet_core_data core_data = extract_pure_data(&packet);
-				sink.feed_next_data(&core_data);
+				sink.feed_next_data(&core_data, packet.seqno);
 				struct ack_packet ack_packet = create_ack_packet(packet.seqno + packet.len + 1);
 				// sending acknowledgment.
 				sendto(socketFd, &ack_packet, sizeof(struct ack_packet*), SOCK_DGRAM,
@@ -37,6 +37,7 @@ void StopWaitClient::recv_message(int socketFd, DataSink sink) {
 				end = true;
 			}
 		}
+		free(&packet);
 	}
 }
 

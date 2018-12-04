@@ -10,7 +10,8 @@
 
 #include "../web_models/app_data.h"
 #include "../data_managers/DataSink.h"
-
+#include <netinet/in.h>
+#include <sys/socket.h>
 class ClientWorker {
 	public:
 	    virtual ~ClientWorker(){}
