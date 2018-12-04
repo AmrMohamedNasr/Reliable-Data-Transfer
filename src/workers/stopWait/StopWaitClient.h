@@ -9,7 +9,7 @@
 #define SRC_WORKERS_STOPWAIT_STOPWAITCLIENT_H_
 
 #include "../clientWorker.h"
-class StopWaitClient :  ClientWorker {
+class StopWaitClient :  public ClientWorker {
 	private:
 	struct sockaddr *src_addr;
 	struct sockaddr *dest_addr;

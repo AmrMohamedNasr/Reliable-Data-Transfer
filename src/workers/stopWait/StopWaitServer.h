@@ -10,7 +10,7 @@
 
 #include "../serverWorker.h"
 
-class StopWaitServer : ServerWorker {
+class StopWaitServer : public ServerWorker {
 	private:
 	// Implementation dependent.
 	public:
