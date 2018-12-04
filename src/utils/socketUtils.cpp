@@ -4,6 +4,7 @@
  *  Created on: Dec 4, 2018
  *      Author: amrnasr
  */
+#include "../web_models/packet.h"
 
 struct packet receive_packet(int sock, struct sockaddr *src_addr, bool *error, bool*time_out) {
 

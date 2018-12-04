@@ -15,7 +15,6 @@
 class StopWaitClient :  public ClientWorker {
 	private:
 	struct sockaddr_in src_addr;
-	struct sockaddr_in dest_addr;
 	bool error;
 	bool time_out;
 	public:
