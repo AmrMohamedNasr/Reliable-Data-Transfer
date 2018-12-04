@@ -8,12 +8,14 @@
 #ifndef SRC_SERVER_WORKERS_SERVERWORKER_H_
 #define SRC_SERVER_WORKERS_SERVERWORKER_H_
 
-#include "../../web_models/app_data.h"
+#include "../data_managers/DataFeeder.h"
+#include "../web_models/app_data.h"
 
 class ServerWorker {
 	public:
 		virtual ~ServerWorker(){}
-		virtual void send_message(struct app_data * data) = 0;
+		virtual void send_message(DataFeeder dataFeeder, unsigned int seed, float loss_prob,
+				int sendSocket, const struct sockaddr * clientAddr) = 0;
 };
 
 

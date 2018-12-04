@@ -18,7 +18,10 @@ struct packet {
 		char data[PCK_DATA_SIZE];
 };
 
-
+struct packet_core_data {
+	uint16_t size;
+	char data[PCK_DATA_SIZE];
+};
 
 
 #endif /* SRC_WEB_MODELS_PACKET_H_ */
