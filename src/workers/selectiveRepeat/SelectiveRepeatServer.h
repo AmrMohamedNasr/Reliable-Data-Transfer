@@ -15,7 +15,7 @@ class SelectiveRepeatServer : ServerWorker {
 	// Implementation dependent.
 	public:
 		~SelectiveRepeatServer();
-		void send_message(DataFeeder dataFeeder, unsigned int seed, float loss_prob,
+		void send_message(DataFeeder dataFeeder, float loss_prob,
 				int sendSocket, const struct sockaddr * clientAddr);
 };
 
