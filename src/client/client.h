@@ -16,8 +16,8 @@ class Client {
 	private :
 		int server_port;
 		int port;
-		int recv_window;
-		string server_ip;
+		unsigned int recv_window;
+		struct in_addr * server_ip;
 		string filename;
 	public :
 		// String containing the path to the file having client parameters.

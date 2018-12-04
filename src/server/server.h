@@ -18,8 +18,8 @@ using namespace std;
 class Server {
 	private:
 		int port;
-		time_t seed;
-		int slideWindow;
+		unsigned int seed;
+		unsigned int slideWindow;
 		float loss_prob;
 	public :
 		// Path to file having the server parameters.

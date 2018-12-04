@@ -18,19 +18,19 @@ struct clientParameters {
 	int servPort;
 	int cliPort;
 	string filename;
-	int windowSize;
+	unsigned int windowSize;
 };
 
 struct serverParameters {
 	int servPort;
-	int windowSize;
-	time_t seed;
+	unsigned int windowSize;
+	unsigned int seed;
 	float lossProb;
 };
 
 vector<string> readLines(string path);
-struct serverParameters readServerParameters(string path);
-struct clientParameters readClientParameters(string path);
+struct serverParameters readServerParameters(string path, bool *error);
+struct clientParameters readClientParameters(string path, bool *error);
 
 
 #endif /* SRC_PARSER_ARGUMENTPARSER_H_ */
