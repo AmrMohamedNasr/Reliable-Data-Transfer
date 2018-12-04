@@ -9,6 +9,7 @@
 #define SRC_CLIENT_CLIENT_H_
 
 #include <string>
+#include "../workers/WorkerFactory.h"
 
 using namespace std;
 
@@ -23,7 +24,7 @@ class Client {
 		// String containing the path to the file having client parameters.
 		Client(string path);
 		// adjust parameters according to arguments in server_main
-		void start();
+		void start(PROTO_TYPE type);
 };
 
 

@@ -40,4 +40,27 @@ ServerWorker * createServerWorker(PROTO_TYPE type) {
 		}
 }
 
-
+PROTO_TYPE obtainType(int id) {
+	switch(id) {
+		case 3:
+			return PROTO_TYPE::GO_BACK_N;
+		case 2:
+			return PROTO_TYPE::SELECTIVE_REPEAT;
+		case 1:
+			return PROTO_TYPE::WAIT_AND_STOP;
+		default:
+			return PROTO_TYPE::WAIT_AND_STOP;
+	}
+}
+string typeToString(PROTO_TYPE type) {
+	switch(type) {
+		case PROTO_TYPE::GO_BACK_N:
+			return string("Go Back N");
+		case PROTO_TYPE::SELECTIVE_REPEAT:
+			return string("Selective Repeat");
+		case PROTO_TYPE::WAIT_AND_STOP:
+			return string("Wait & Stop");
+		default:
+			return string("Wait & Stop");
+	}
+}

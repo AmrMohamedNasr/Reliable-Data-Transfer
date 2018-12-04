@@ -10,7 +10,10 @@
 #include <streambuf>
 
 using namespace std;
-
+FileHandler::FileHandler() {
+	this->reader = FileReader();
+	this->writer = FileWriter();
+}
 bool FileHandler::check_file(string path) {
 	ifstream t(path);
 	if (!t) {

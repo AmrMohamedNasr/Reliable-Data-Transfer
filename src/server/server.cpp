@@ -24,7 +24,7 @@ Server::Server(string path) {
 	print_server_parameters(&params);
 }
 
-void Server::start() {
+void Server::start(PROTO_TYPE type) {
 
 }
 

@@ -15,5 +15,6 @@ enum class PROTO_TYPE {WAIT_AND_STOP, SELECTIVE_REPEAT, GO_BACK_N};
 
 ClientWorker * createClientWorker(PROTO_TYPE type);
 ServerWorker * createServerWorker(PROTO_TYPE type);
-
+PROTO_TYPE obtainType(int id);
+string typeToString(PROTO_TYPE type);
 #endif /* SRC_WORKERS_WORKERFACTORY_H_ */

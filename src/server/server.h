@@ -12,6 +12,7 @@
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>
 #include <string>
+#include "../workers/WorkerFactory.h"
 
 using namespace std;
 
@@ -25,7 +26,7 @@ class Server {
 		// Path to file having the server parameters.
 		Server(string path);
 		// adjust parameters according to arguments in server_main
-		void start();
+		void start(PROTO_TYPE type);
 };
 
 

@@ -19,6 +19,7 @@ class FileHandler {
 		FileReader reader;
 		FileWriter writer;
 	public:
+		FileHandler();
 		bool check_file(string path);
 		size_t get_file_size(string path);
 		void set_read_file(string path);

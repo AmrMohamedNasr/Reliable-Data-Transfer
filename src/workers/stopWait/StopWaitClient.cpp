@@ -18,7 +18,7 @@ StopWaitClient::~StopWaitClient() {
 }
 
 
-void StopWaitClient::recv_message(int socketFd, DataSink sink) {
+void StopWaitClient::recv_message(int socketFd, DataSink sink, unsigned int window) {
 	memset(&src_addr, 0 , sizeof(sockaddr_in));
 	bool end = false;
 	while (!end) {
@@ -37,7 +37,6 @@ void StopWaitClient::recv_message(int socketFd, DataSink sink) {
 				end = true;
 			}
 		}
-		free(&packet);
 	}
 }
 

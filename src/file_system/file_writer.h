@@ -17,10 +17,12 @@ using namespace std;
 
 class FileWriter {
 	private:
-		ofstream ofs;
+		ofstream *ofs;
 	public:
+		FileWriter();
 		void set_file(string path);
 		bool write_chunk(char * chunk, streamsize size);
+		~FileWriter();
 };
 
 

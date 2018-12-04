@@ -23,7 +23,7 @@ class SelectiveRepeatClient : public ClientWorker {
 	public:
 		// Use constructor to take all needed info from upper class.
 		~SelectiveRepeatClient();
-		void recv_message(int socketFd, DataSink sink);
+		void recv_message(int socketFd, DataSink sink, unsigned int window);
 };
 
 

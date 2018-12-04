@@ -15,7 +15,7 @@
 class ClientWorker {
 	public:
 	    virtual ~ClientWorker(){}
-	    virtual void recv_message(int socketFd, DataSink sink) = 0;
+	    virtual void recv_message(int socketFd, DataSink sink, unsigned int window) = 0;
 };
 
 

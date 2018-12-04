@@ -18,6 +18,7 @@ class DataFeeder {
 		FileHandler file_handler = FileHandler();
 		size_t remain_size;
 	public:
+		DataFeeder();
 		bool readFile(string path);
 		bool hasNext();
 		struct packet_core_data getNextDataSegment();

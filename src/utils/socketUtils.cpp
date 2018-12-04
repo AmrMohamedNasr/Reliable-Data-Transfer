@@ -37,7 +37,7 @@ bool send_packet(int sock, struct sockaddr *dest_addr, struct packet * pack) {
 }
 
 bool hasData(int sock) {
-
+	return true;
 }
 
 

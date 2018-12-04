@@ -17,7 +17,7 @@ class GoBackClient : public ClientWorker {
 	public:
 		// Use constructor to take all needed info from upper class.
 		~GoBackClient();
-		void recv_message(int socketFd, DataSink sink);
+		void recv_message(int socketFd, DataSink sink, unsigned int window);
 };
 
 

@@ -17,7 +17,7 @@ using namespace std;
 class DataSink {
 	private:
 		FileHandler file_handler;
-		vector<struct packet *> packets;
+		vector<struct packet> packets;
 	public:
 		DataSink();
 		void set_write_file(string path);

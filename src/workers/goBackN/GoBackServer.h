@@ -16,7 +16,7 @@ class GoBackServer : public ServerWorker {
 	public:
 		~GoBackServer();
 		void send_message(DataFeeder dataFeeder, float loss_prob,
-				int sendSocket, const struct sockaddr * clientAddr);
+				int sendSocket, const struct sockaddr * clientAddr, unsigned int window);
 };
 
 #endif
