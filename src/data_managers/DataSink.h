@@ -17,7 +17,7 @@ class DataSink {
 	private:
 	public:
 		void set_write_file(string path);
-		void feed_next_data(packet_core_data data);
+		void feed_next_data(packet_core_data *data);
 		/**
 		 * Returns currently buffered data if exists.
 		 * Should only be used at higher levels.
