@@ -21,6 +21,7 @@ Server::Server(string path) {
 	this->port = params.servPort;
 	this->slideWindow = params.windowSize;
 	this->seed = params.seed;
+	print_server_parameters(&params);
 }
 
 void Server::start() {

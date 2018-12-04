@@ -32,5 +32,6 @@ vector<string> readLines(string path);
 struct serverParameters readServerParameters(string path, bool *error);
 struct clientParameters readClientParameters(string path, bool *error);
 
-
+void print_server_parameters(struct serverParameters * params);
+void print_client_parameters(struct clientParameters * params);
 #endif /* SRC_PARSER_ARGUMENTPARSER_H_ */

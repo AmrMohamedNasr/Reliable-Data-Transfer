@@ -14,6 +14,8 @@
 #include <string.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 
 #define DELIM "."
 
@@ -114,9 +116,6 @@ vector<string> readLines(string path) {
 			lines.push_back(line);
 		}
 	}
-	for (string line : lines) {
-		cout << line << endl;
-	}
 	return lines;
 }
 struct serverParameters readServerParameters(string path, bool *error) {
@@ -155,4 +154,17 @@ struct clientParameters readClientParameters(string path, bool *error) {
 	return params;
 }
 
+void print_server_parameters(struct serverParameters * params) {
+	cout << "Server Port : " << params->servPort << endl;
+	cout << "Server Sending Window : " << params->windowSize << endl;
+	cout << "Server Seed : " << params->seed << endl;
+	cout << "Server Loss Probability : " << params->lossProb << endl;
+}
 
+void print_client_parameters(struct clientParameters * params) {
+	cout << "Server IP : " << inet_ntoa(*params->inAdd) << endl;
+	cout << "Server Port : " << params->servPort << endl;
+	cout << "Client Port : " << params->cliPort << endl;
+	cout << "Client Receiving Window : " << params->windowSize << endl;
+	cout << "File requested : " << params->filename << endl;
+}

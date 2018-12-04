@@ -23,6 +23,7 @@ Client::Client(string path) {
 	this->server_port = params.servPort;
 	this->recv_window = params.windowSize;
 	this->filename = params.filename;
+	print_client_parameters(&params);
 }
 
 void Client::start() {
