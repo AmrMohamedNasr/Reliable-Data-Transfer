@@ -25,7 +25,10 @@ void recv_message(int socketFd, DataSink sink) {
 	acknoledgment = create_ack_packet(recvPacket -> seqno);
 	uint16_t check_sum = calculateChecksumAck(&acknoledgement);
 	acknoledgement -> cksum = check_sum;
-	
+	sendto(socketFd, acknoledgement, sizeof(*acknoledgement),0,
+	src_addr, sizeof(src_addr))
      }
-     
+    else {
+	//lessaaa
+    }   
 }
