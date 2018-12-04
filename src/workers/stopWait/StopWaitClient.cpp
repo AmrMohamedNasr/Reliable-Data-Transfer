@@ -6,9 +6,10 @@
  */
 #include "StopWaitClient.h"
 #include <iostream>
-#include <vector>
-#include <sys/socket.h>
+#include <unistd.h>
+#include <string.h>
 #include "../../utils/socketUtils.h"
+#include "../../web_models/packet_utils.h"
 
 StopWaitClient::~StopWaitClient() {
 
@@ -16,8 +17,15 @@ StopWaitClient::~StopWaitClient() {
 
 
 void StopWaitClient::recv_message(int socketFd, DataSink sink) {
-	struct packet packet = receive_packet(socketFd, src_addr, &error, &time_out);
+	memset(&src_addr, 0 , sizeof(sockaddr_in));
+	memset(&dest_addr, 0 , sizeof(sockaddr_in));
+	struct packet packet = receive_packet(socketFd, (struct sockaddr *)&src_addr, &error, &time_out);
+	if (error || time_out) {
 
+	} else {
+		sink.feed_next_data(&extract_pure_data(packet));
+
+	}
 }
 
 
