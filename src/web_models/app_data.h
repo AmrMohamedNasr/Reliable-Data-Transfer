@@ -22,8 +22,8 @@ struct app_data {
 
 void deleteAppData(struct app_data * dat);
 
-vector<struct packet*> breakAppMessage(struct app_data *);
+vector<struct packet> breakAppMessage(struct app_data *);
 
-struct app_data * assembleAppMessage(struct app_data *);
+struct app_data * assembleAppMessage(vector<struct packet*> pckts);
 
 #endif /* SRC_WEB_MODELS_APP_DATA_H_ */

@@ -11,7 +11,7 @@
 
 #include "../clientWorker.h"
 
-class GoBackClient :  ClientWorker {
+class GoBackClient : public ClientWorker {
 	private:
 	//Implemention Dependant.
 	public:

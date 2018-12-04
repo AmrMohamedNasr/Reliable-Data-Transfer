@@ -10,7 +10,7 @@
 
 #include "../serverWorker.h"
 
-class SelectiveRepeatServer : ServerWorker {
+class SelectiveRepeatServer : public ServerWorker {
 	private:
 	// Implementation dependent.
 	public:

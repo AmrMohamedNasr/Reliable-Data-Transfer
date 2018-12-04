@@ -12,7 +12,7 @@
 
 #include "../clientWorker.h"
 
-class SelectiveRepeatClient :  ClientWorker {
+class SelectiveRepeatClient : public ClientWorker {
 	private:
 	//Implemention Dependant.
 	public:

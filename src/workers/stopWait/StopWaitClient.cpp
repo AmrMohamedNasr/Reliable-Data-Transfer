@@ -23,7 +23,8 @@ void StopWaitClient::recv_message(int socketFd, DataSink sink) {
 	if (error || time_out) {
 
 	} else {
-		sink.feed_next_data(&extract_pure_data(packet));
+		struct packet_core_data core_data = extract_pure_data(&packet);
+		sink.feed_next_data(&core_data);
 
 	}
 }
