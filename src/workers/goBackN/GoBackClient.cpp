@@ -1,9 +1,11 @@
 #include "GoBackClient.h"
-#include "packet.h"
-#include "socketUtils.h"
+#include "../web_models/packet.h"
+#include "../web_models/packet_utils.h"
+#include "../utils/socketUtils.h"
 
 using namespace std;
 void recv_message(int socketFd, DataSink sink) {
+
      bool error = false;
      bool timeout = false;
      struct packet * recvPacket;
@@ -16,12 +18,14 @@ void recv_message(int socketFd, DataSink sink) {
 	&timeout);
  
      if (!error && !timeout) {
-        corePacket -> size = recvPacket -> len;
-        corePacket -> data = recvPacket -> data;
+        corePacket = extract_pure_data(&recvPacket);
         sink.feed_next_data(corePacket);
-        
-
+	struct ack_packet acknoledgement;
+	memset (acknoledgement, 0, sizeof(ack_packet));
+	acknoledgment = create_ack_packet(recvPacket -> seqno);
+	uint16_t check_sum = calculateChecksumAck(&acknoledgement);
+	acknoledgement -> cksum = check_sum;
+	
      }
-     
      
 }
