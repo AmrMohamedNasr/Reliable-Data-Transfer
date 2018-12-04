@@ -13,7 +13,11 @@
 
 class GoBackClient : public ClientWorker {
 	private:
-	//Implemention Dependant.
+	bool error;
+    	bool timeout;
+     	struct packet * recvPacket;
+     	struct sockaddr * src_addr;
+     	struct packet_core_data * corePacket;
 	public:
 		// Use constructor to take all needed info from upper class.
 		~GoBackClient();

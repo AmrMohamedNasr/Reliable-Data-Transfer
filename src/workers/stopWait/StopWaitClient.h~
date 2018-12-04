@@ -9,6 +9,12 @@
 #define SRC_WORKERS_STOPWAIT_STOPWAITCLIENT_H_
 
 #include "../clientWorker.h"
+<<<<<<< HEAD
+class StopWaitClient :  public ClientWorker {
+	private:
+	struct sockaddr *src_addr;
+	struct sockaddr *dest_addr;
+=======
 
 #include <netinet/in.h>
 #include <sys/socket.h>

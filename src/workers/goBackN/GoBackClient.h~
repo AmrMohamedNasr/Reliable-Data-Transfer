@@ -11,13 +11,13 @@
 
 #include "../clientWorker.h"
 
-class GoBackClient :  ClientWorker {
+class GoBackClient : public ClientWorker {
 	private:
 	//Implemention Dependant.
 	public:
 		// Use constructor to take all needed info from upper class.
 		~GoBackClient();
-		recv_message(int socketFd, DataSink sink);
+		void recv_message(int socketFd, DataSink sink);
 };
 
 
