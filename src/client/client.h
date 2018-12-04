@@ -23,7 +23,7 @@ class Client {
 		// String containing the path to the file having client parameters.
 		Client(string path);
 		// adjust parameters according to arguments in server_main
-		void start_client();
+		void start();
 };
 
 

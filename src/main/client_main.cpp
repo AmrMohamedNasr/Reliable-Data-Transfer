@@ -5,9 +5,15 @@
  *      Author: michael
  */
 #include <iostream>
+#include "../client/client.h"
+
 using namespace std;
 int main(int argc, char** argv) {
-	cout << "Hello client main" << endl;
+	string file;
+	cout << "Enter File path to read server specification: " << endl;
+	cin >> file;
+	Client client(file);
+	client.start();
 	return 0;
 }
 

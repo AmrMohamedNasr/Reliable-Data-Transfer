@@ -5,9 +5,16 @@
  *      Author: michael
  */
 #include <iostream>
+#include "../server/server.h"
+
 using namespace std;
+
 int main(int argc, char** argv) {
-	cout << "Hello server main" << endl;
+	string file;
+	cout << "Enter File path to read server specification: " << endl;
+	cin >> file;
+	Server server(file);
+	server.start();
 	return 0;
 }
 
