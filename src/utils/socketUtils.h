@@ -11,7 +11,7 @@
 #include "../web_models/packet.h"
 
 
-struct packet recieve_packet(int sock, struct sockaddr *src_addr, bool *error);
+struct packet receive_packet(int sock, struct sockaddr *src_addr, bool *error, bool*time_out);
 bool send_packet(int sock, struct sockaddr *dest_addr, struct packet * pack);
 bool hasData(int sock);
 
