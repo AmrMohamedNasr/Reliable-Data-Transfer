@@ -9,14 +9,13 @@
 
 #include <stdint.h>
 
+#define	PCK_DATA_SIZE	512
 
 struct packet {
-
 		uint16_t check_sum;
 		uint16_t len;
 		uint32_t seqno;
-		char data[500];
-
+		char data[PCK_DATA_SIZE];
 };
 
 
