@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 #define	PCK_DATA_SIZE	512
+#define PCK_HEADER_SIZE	64
 
 struct packet {
 		uint16_t check_sum;

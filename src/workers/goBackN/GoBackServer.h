@@ -10,7 +10,7 @@
 
 #include "../serverWorker.h"
 
-class GoBackServer : ServerWorker {
+class GoBackServer : public ServerWorker {
 	private:
 	// Implementation dependent.
 	public:
