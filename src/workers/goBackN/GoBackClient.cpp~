@@ -1,0 +1,20 @@
+#include "GoBackClient.h"
+#include "packet.h"
+#include "socketUtils.h"
+
+using namespace std;
+void recv_message(int socketFd, DataSink sink) {
+
+     struct packet * recvPacket;
+     struct sockaddr * src_addr;
+     memset (recvPacket, 0, sizeof(packet));
+
+     recvPacket = receive_packet(sockFd, &src_addr, false,
+	false);
+     struct packet_core_data* corePacket;
+     memset (corePacket, 0, sizeof(packet_core_data));
+     corePacket->size = recvPacket->len;
+     corePacket->data = recvPacket->data;
+     sink.feed_next_data(packet_core_data *data);
+     
+}
