@@ -16,7 +16,7 @@ class StopWaitClient :  ClientWorker {
 	public:
 		// Use constructor to take all needed info from upper class.
 		~StopWaitClient();
-		app_data * recv_message(int socketFd, DataSink sink);
+		void recv_message(int socketFd, DataSink sink);
 };
 
 

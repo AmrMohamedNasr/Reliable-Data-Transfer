@@ -14,7 +14,7 @@
 class ClientWorker {
 	public:
 	    virtual ~ClientWorker(){}
-	    virtual struct app_data * recv_message(int socketFd, DataSink sink) = 0;
+	    virtual void recv_message(int socketFd, DataSink sink) = 0;
 };
 
 
