@@ -63,16 +63,16 @@ void Server::start(PROTO_TYPE type) {
 		return;
 	}
 	cout << "Listening on port : " << this->port << endl;
-	bool timeout, error;
 	struct sockaddr_in clientAddr;
 	while (1) {
 		memset(&clientAddr, 0, sizeof(struct sockaddr_in));
-		struct packet pck = receive_packet(listenSocket,(struct sockaddr *)&clientAddr, &error, &timeout);
+		struct packet pck = receive_packet(listenSocket,(struct sockaddr *)&clientAddr);
 		pid_t pid = fork();
 		if (pid == 0) {
+			pid = getpid();
 			srand(this->seed);
 			cout << pid << " : Handling Request : " << inet_ntoa(clientAddr.sin_addr) << ":"
-								<< clientAddr.sin_port << endl;
+								<< ntohs(clientAddr.sin_port) << endl;
 			int ntry = 0;
 			int serverSocket;
 			while((serverSocket = socket(AF_INET, SOCK_DGRAM, 0)) < 0 && ntry < RETRIES) {
@@ -89,7 +89,7 @@ void Server::start(PROTO_TYPE type) {
 			memset(filePath, 0, PCK_DATA_SIZE + 1);
 			memcpy(filePath, pck.data, pck.len - PCK_HEADER_SIZE);
 			if (!feeder.readFile(string(filePath))) {
-				cout << pid << " : Invalid file : child closing" << endl;
+				cout << pid << " : Invalid file (" << filePath << "): child closing" << endl;
 				close(serverSocket);
 				exit(1);
 			}
@@ -102,9 +102,8 @@ void Server::start(PROTO_TYPE type) {
 			exit(0);
 		} else if (pid < 0) {
 			cout << "Failed to create child to handle request from : " << inet_ntoa(clientAddr.sin_addr) << ":"
-					<< clientAddr.sin_port << endl;
+					<< ntohs(clientAddr.sin_port) << endl;
 		}
-		break;
 	}
 	close(listenSocket);
 	cout << "Connection closed" << endl;
