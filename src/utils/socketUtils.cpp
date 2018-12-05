@@ -86,7 +86,13 @@ struct packet receive_packet(int sock, struct sockaddr *src_addr) {
 	return packet;
 }
 
-bool send_packet(int sock, struct sockaddr *dest_addr, struct packet * pack) {
+struct ack_packet receive_ack_packet(int sock, const struct sockaddr *dest_addr, bool *error, bool*time_out) {
+
+}
+struct ack_packet receive_ack_packet(int sock, const struct sockaddr *dest_addr) {
+
+}
+bool send_packet(int sock, const struct sockaddr *dest_addr, struct packet * pack) {
 	if (sendto(sock, pack, pack->len, 0, dest_addr, sizeof(struct sockaddr_in))> 0) {
 		return true;
 	}
@@ -98,5 +104,7 @@ bool hasData(int sock) {
 	ioctl(sock, FIONREAD, &count);
 	return count > 0;
 }
+
+
 
 

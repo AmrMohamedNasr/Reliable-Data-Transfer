@@ -13,7 +13,10 @@
 
 struct packet receive_packet(int sock, struct sockaddr *src_addr, bool *error, bool*time_out);
 struct packet receive_packet(int sock, struct sockaddr *src_addr);
-bool send_packet(int sock, struct sockaddr *dest_addr, struct packet * pack);
+struct ack_packet receive_ack_packet(int sock, const struct sockaddr *dest_addr, bool *error, bool*time_out);
+struct ack_packet receive_ack_packet(int sock, const struct sockaddr *dest_addr);
+bool send_packet(int sock, const struct sockaddr *dest_addr, struct packet * pack);
+bool send_ack_packet(int sock, struct sockaddr *dest_addr, struct ack_packet * pack);
 bool hasData(int sock);
 
 

@@ -29,7 +29,8 @@ void StopWaitClient::recv_message(int socketFd, DataSink sink, unsigned int wind
 			if (packet.len != 0) {
 				struct packet_core_data core_data = extract_pure_data(&packet);
 				sink.feed_next_data(&core_data, packet.seqno);
-				struct ack_packet ack_packet = create_ack_packet(packet.seqno + packet.len + 1);
+				struct ack_packet ack_packet = create_ack_packet(
+						packet.seqno + (packet.len - PCK_HEADER_SIZE) + 1);
 				// sending acknowledgment.
 				sendto(socketFd, &ack_packet, sizeof(struct ack_packet*), SOCK_DGRAM,
 					(struct sockaddr *) &src_addr, sizeof(src_addr));
