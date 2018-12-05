@@ -27,6 +27,7 @@ int main(int argc, char** argv) {
 	}
 	PROTO_TYPE type = obtainType(id);
 	cout << "Protocol chosen is : " << typeToString(type) << endl;
+	cout << endl;
 	server.start(type);
 	return 0;
 }

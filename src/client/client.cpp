@@ -9,12 +9,16 @@
 #include "../parser/ArgumentParser.h"
 #include "../web_models/packet_utils.h"
 #include "../utils/socketUtils.h"
+#include "../definitions.h"
+
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h>
 
 #include <iostream>
 #include <cstring>
 
-#define RETRIES	3
-#define TIMEOUT	5
+
 using namespace std;
 
 Client::Client(string path) {
@@ -30,6 +34,7 @@ Client::Client(string path) {
 	this->recv_window = params.windowSize;
 	this->filename = params.filename;
 	print_client_parameters(&params);
+	cout << endl;
 }
 
 void Client::start(PROTO_TYPE type) {
@@ -63,6 +68,7 @@ void Client::start(PROTO_TYPE type) {
 	if (success < 0) {
 		perror("bind");
 		cout << "Could not bind client port. Ending program !" << endl;
+		close(clientSocket);
 		return;
 	}
 	struct packet pack = create_data_packet(this->filename.c_str(), (uint16_t)this->filename.size(), 0);
@@ -81,6 +87,7 @@ void Client::start(PROTO_TYPE type) {
 		if (error) {
 			perror("send");
 			cout << "Could not send request. Ending program !" << endl;
+			close(clientSocket);
 			return;
 		}
 		ntry++;
@@ -99,14 +106,19 @@ void Client::start(PROTO_TYPE type) {
 	if (error) {
 		perror("Receiving initial response :");
 		cout << "Could not establish transmission with server. Ending program !" << endl;
-		exit(1);
+		close(clientSocket);
+		return;
 	}
+	cout << "Connection established : beginning file reception" << endl;
 	DataSink sink = DataSink();
 	//sink.set_write_file(this->filename);
 	sink.set_write_file("./ClientRecievedFile.zip");
 	ClientWorker *worker = createClientWorker(type);
 	worker->recv_message(clientSocket, sink, this->recv_window);
 	delete worker;
+	cout << "Finished Reception !" << endl;
+	close(clientSocket);
+	cout << "Connection closed" << endl;
 }
 
 
