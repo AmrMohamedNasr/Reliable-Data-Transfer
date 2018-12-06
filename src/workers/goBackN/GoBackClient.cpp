@@ -10,6 +10,8 @@ using namespace std;
 void GoBackClient::recv_message(int socketFd, DataSink *sink, unsigned int window) {
      bool end = false;
      base_ack_no = 0;
+     memset(&src_addr, 0 , sizeof(sockaddr_in));
+
      while (!end) {
        struct timeval tv;
 		tv.tv_sec = 0;
