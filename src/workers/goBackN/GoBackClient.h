@@ -10,9 +10,9 @@
 
 
 #include "../clientWorker.h"
-#include "../web_models/packet.h"
-#include "../web_models/packet_utils.h"
-#include "../utils/socketUtils.h"
+#include "../../web_models/packet.h"
+#include "../../web_models/packet_utils.h"
+#include "../../utils/socketUtils.h"
 #include <sys/socket.h>
 
 class GoBackClient : public ClientWorker {
@@ -24,8 +24,10 @@ class GoBackClient : public ClientWorker {
      	
 	public:
 		// Use constructor to take all needed info from upper class.
-		~GoBackClient();
-		void recv_message(int socketFd, DataSink sink);
+		~GoBackClient() {
+
+		};
+		void recv_message(int socketFd, DataSink *sink, unsigned int window);
 };
 
 

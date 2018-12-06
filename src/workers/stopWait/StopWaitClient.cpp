@@ -20,7 +20,6 @@ StopWaitClient::~StopWaitClient() {
 
 
 void StopWaitClient::recv_message(int socketFd, DataSink *sink, unsigned int window) {
-
 	memset(&src_addr, 0 , sizeof(sockaddr_in));
 	uint32_t ackNo = 0;
 	bool end = false;

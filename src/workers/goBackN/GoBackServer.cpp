@@ -1,6 +1,7 @@
 #include "GoBackServer.h"
 #include <iostream>
 #include <unistd.h>
+#include <cstring>
 #include "../../utils/socketUtils.h"
 #include "../../web_models/packet_utils.h"
 #include "../../web_models/ack_packet.h"
@@ -9,13 +10,13 @@ using namespace std;
 
 void GoBackServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 				int sendSocket, const struct sockaddr * clientAddr, unsigned int window) {
- memset(&src_addr, 0 , sizeof(sockaddr_in));
+memset(&src_addr, 0 , sizeof(sockaddr_in));
   unacked_data_counter = 0;
   seqno = 0;
   last_acked = 0;
-  while (dataFeeder.hasNext()) {
-    while (dataFeeder.hasNext() && unacked_data_counter < window) {
-      struct packet_core_data core_data = dataFeeder.getNextDataSegment();
+  while (dataFeeder->hasNext()) {
+    while (dataFeeder->hasNext() && unacked_data_counter < window) {
+      struct packet_core_data core_data = dataFeeder->getNextDataSegment();
 
       struct packet packet = create_data_packet(&core_data, seqno);
 	seqno++;
@@ -33,12 +34,12 @@ void GoBackServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 	struct timeval tv;
 		tv.tv_sec = 0;
 		tv.tv_usec = 0;
-	struct ack_packet ack_packet = receive_ack_packet(sendSocket, (struct sockaddr *)&src_addr, &error, &time_out, tv);
+	struct ack_packet ack_packet = receive_ack_packet(sendSocket, (struct sockaddr *)&src_addr, &error, &timeout, tv);
 	if (verifyChecksumAck(&ack_packet)) {
 		if (!error && !timeout) {
 			unsigned int j = last_acked; 
 			while (j < ack_packet.ackno) {
-				unacked_packet.pop_front();
+				//unacked_packet.pop_front();
 				j++;
 			}
 			unacked_data_counter -= ack_packet.ackno;

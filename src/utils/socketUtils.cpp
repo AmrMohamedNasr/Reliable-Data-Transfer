@@ -114,6 +114,6 @@ bool update_remaining_timeout(struct timeval * tv, struct timeval *old_time) {
 	tv->tv_usec = tv->tv_usec - (((long)diff) % 1000000);
 	return currentDiff <= diff;
 }
->>>>>>> cf02d44684b63150f054c4d1abe98e0120a6493f
+
 
 

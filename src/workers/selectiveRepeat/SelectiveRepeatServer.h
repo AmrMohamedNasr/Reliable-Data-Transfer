@@ -12,6 +12,8 @@
 #include <map>
 #include <vector>
 #include <set>
+#include <netinet/in.h>
+
 class SelectiveRepeatServer : public ServerWorker {
 	private:
 		uint32_t base_seq_no;
