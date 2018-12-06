@@ -13,13 +13,17 @@
 #include "../clientWorker.h"
 #include <map>
 #include <vector>
+#include <queue>
+using namespace std;
 class SelectiveRepeatClient : public ClientWorker {
 	private:
-		uint32_t base_seq_no;
-		vector<pair<uint32_t, uint16_t>> wnd;
+		uint32_t base_ack_no;
+		priority_queue<uint32_t> wnd;
+		map<uint32_t, struct packet_core_data> data_received;
 		struct sockaddr_in src_addr;
 		bool error;
 		bool time_out;
+		void handleWindow(DataSink *sink);
 	public:
 		// Use constructor to take all needed info from upper class.
 		~SelectiveRepeatClient();
