@@ -1,29 +1,42 @@
 #include "GoBackClient.h"
-#include "../web_models/packet.h"
-#include "../web_models/packet_utils.h"
-#include "../utils/socketUtils.h"
-#include <sys/socket.h>
-using namespace std;
-void recv_message(int socketFd, DataSink sink) {
+#include <iostream>
+#include <unistd.h>
+#include "../../utils/socketUtils.h"
+#include "../../web_models/packet_utils.h"
+#include "../../web_models/ack_packet.h"
+#include "../../data_managers/DataSink.h"
 
-     memset (&corePacket, 0, sizeof(packet_core_data));
-     memset (&recvPacket, 0, sizeof(packet));
-     memset (&src_addr, 0, sizeof(sockaddr_in));
-     recvPacket = receive_packet(socketFd, &src_addr, &error,
-	&timeout);
- 
-     if (error || timeout) {
-        
-     }
-    else {
-	corePacket = extract_pure_data(&recvPacket);
-        sink.feed_next_data(&corePacket);
-	struct ack_packet acknoledgement;
-	memset (acknoledgement, 0, sizeof(ack_packet));
-	acknoledgment = create_ack_packet(recvPacket -> seqno);
-	uint16_t check_sum = calculateChecksumAck(&acknoledgement);
-	acknoledgement -> cksum = check_sum;
-	sendto(socketFd, acknoledgement, sizeof(*acknoledgement),0,
-	src_addr, sizeof(*src_addr))
-    }   
+using namespace std;
+void GoBackClient::recv_message(int socketFd, DataSink *sink, unsigned int window) {
+     bool end = false;
+     base_ack_no = 0;
+     while (!end) {
+       struct timeval tv;
+		tv.tv_sec = 0;
+		tv.tv_usec = 0;
+		struct packet packet = receive_packet(socketFd, (struct sockaddr *)&src_addr, &error, &time_out, tv);
+		if (error || time_out) {
+			cout << "error occurred receiving packet" << endl;
+		}
+      else if (verifyChecksum(&packet)) {
+	if(packet.len != PCK_HEADER_SIZE) {
+	  if( recvPacket.seqno == last_recv + 1) {
+	    last_recv ++;
+	    struct packet_core_data core_data = extract_pure_data(&packet);
+            sink.feed_next_data(&core_data);
+
+	    struct ack_packet ack_packet = create_ack_packet(packet.seqno);
+	    send_ack_packet(socketFd, (const struct sockaddr *)&src_addr, 	 &ack_packet);
+         }
+	}
+	else {
+	  struct ack_packet ack_packet = create_ack_packet(packet.seqno);
+	  send_ack_packet(socketFd, (const struct sockaddr *)&src_addr, &ack_packet);
+	  end = true;
+	} 
+	//free (&src_addr);
+      }
+    }
+     
+  
 }
