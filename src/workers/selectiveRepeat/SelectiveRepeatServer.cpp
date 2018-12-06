@@ -15,7 +15,13 @@
 #include "../../data_managers/DataFeeder.h"
 #include <netinet/in.h>
 #include <sys/time.h>
+#include <random>
 #define CLOSED_CYCLE 10
+int randomWithProb(double p) {
+    double rndDouble = (double)rand() / RAND_MAX;
+    return rndDouble > p;
+}
+
 SelectiveRepeatServer::~SelectiveRepeatServer() {
 
 }
@@ -28,10 +34,10 @@ void SelectiveRepeatServer::send_message(DataFeeder *dataFeeder, float loss_prob
 	struct sockaddr_in clAddr;
 	while(dataFeeder->hasNext()) {
 		if (base_seq_no + window > seq_no) {
-
 			struct packet_core_data packet_data = dataFeeder->getNextDataSegment();
 			struct packet packet = create_data_packet( &packet_data, seq_no);
 			struct timeval tv;
+//			if (randomWithProb((double)(1 - loss_prob)) {
 			if (send_packet(sendSocket, clientAddr, &packet)) {
 				seq_no++;
 				tv.tv_sec = TIMEOUT;
@@ -49,6 +55,17 @@ void SelectiveRepeatServer::send_message(DataFeeder *dataFeeder, float loss_prob
 				cout << "Error on sending..." << endl;
 				return;
 			}
+//			} else {
+//				seq_no++;
+//				data_sent.insert(pair<uint32_t, struct packet>(seq_no, packet));
+//				seqnums_sent.insert(pair<uint32_t, struct timeval>(seq_no, tv));
+//				while (hasData(sendSocket)) {
+//					receive_ack(sendSocket, window);
+//				}
+//				if (!updateTimers(sendSocket, clientAddr)) {
+//					return;
+//				}
+//			}
 		} else {
 			receive_ack(sendSocket, window);
 			updateTimers(sendSocket, clientAddr);
@@ -66,7 +83,6 @@ bool SelectiveRepeatServer::updateTimers(int sendSocket, const struct sockaddr *
 			if (send_packet(sendSocket, clientAddr, &packet)) {
 				not_acked.second.tv_sec = TIMEOUT;
 				not_acked.second.tv_usec = 0;
-
 			} else {
 				cout << "Error on sending packets..." << endl;
 				return false;
