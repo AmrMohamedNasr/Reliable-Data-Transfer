@@ -28,19 +28,34 @@ static void _mkdir(const char *dir) {
         mkdir(tmp, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 }
 
+FileWriter::FileWriter() {
+	this->ofs = nullptr;
+}
+
 void FileWriter::set_file(string path) {
 	char pathC[path.size() + 1];
 	memcpy(pathC, path.c_str(), (size_t)path.size());
 	pathC[path.size()] = '\0';
 	char * pathOnly = dirname(pathC);
 	_mkdir(pathOnly);
-	this->ofs = ofstream(path);
+	if (this->ofs != nullptr) {
+		delete this->ofs;
+	}
+	this->ofs = new ofstream(path);
 }
 
 bool FileWriter::write_chunk(char * chunk, streamsize size) {
-	if (!this->ofs) {
+	if (this->ofs == nullptr || !(*this->ofs)) {
 		return false;
 	}
-	this->ofs.write(chunk, size);
+	this->ofs->write(chunk, size);
 	return true;
+}
+
+FileWriter::~FileWriter() {
+	if (this->ofs != nullptr) {
+		this->ofs->close();
+		delete this->ofs;
+		this->ofs = nullptr;
+	}
 }

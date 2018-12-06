@@ -9,7 +9,7 @@
 #include <cstring>
 #include "ack_packet.h"
 
-struct packet create_data_packet(char * data, uint16_t size, uint32_t seq_num) {
+struct packet create_data_packet(const char * data, uint16_t size, uint32_t seq_num) {
 	struct packet pck;
 	memset(&pck, 0, sizeof(struct packet));
 	pck.len = PCK_HEADER_SIZE + size;

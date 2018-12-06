@@ -8,9 +8,8 @@
 #define SRC_WEB_MODELS_PACKET_H_
 
 #include <stdint.h>
+#include "../definitions.h"
 
-#define	PCK_DATA_SIZE	512
-#define PCK_HEADER_SIZE	64
 
 struct packet {
 		uint16_t check_sum;

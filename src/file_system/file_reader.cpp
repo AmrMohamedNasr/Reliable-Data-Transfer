@@ -8,16 +8,31 @@
 #include "file_reader.h"
 #include <string.h>
 
+FileReader::FileReader() {
+	this->ifs = nullptr;
+}
+
 void FileReader::set_file(string path) {
-	this->ifs = ifstream(path);
+	if (ifs != nullptr) {
+		delete ifs;
+	}
+	this->ifs = new ifstream(path);
 }
 
 size_t FileReader::read_chunk(int size, char * buff) {
-	if (!ifs) {
+	if (ifs == nullptr || !*(ifs)) {
 		memset(buff, 0, size);
 		return 0;
 	}
 	memset(buff, 0, size);
-	ifs.read(buff, size);
-	return ifs.gcount();
+	ifs->read(buff, size);
+	return ifs->gcount();
+}
+
+FileReader::~FileReader() {
+	if (ifs != nullptr) {
+		ifs->close();
+		delete ifs;
+		ifs = nullptr;
+	}
 }

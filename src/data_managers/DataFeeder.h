@@ -10,11 +10,15 @@
 
 #include "../web_models/packet.h"
 #include <string>
-
+#include "../file_system/file_handler.h"
 using namespace std;
 
 class DataFeeder {
+	private:
+		FileHandler file_handler = FileHandler();
+		size_t remain_size;
 	public:
+		DataFeeder();
 		bool readFile(string path);
 		bool hasNext();
 		struct packet_core_data getNextDataSegment();

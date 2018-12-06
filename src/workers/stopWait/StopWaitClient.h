@@ -10,18 +10,16 @@
 
 #include "../clientWorker.h"
 
-#include <netinet/in.h>
-#include <sys/socket.h>
+
 class StopWaitClient :  public ClientWorker {
 	private:
-	struct sockaddr_in src_addr;
-	struct sockaddr_in dest_addr;
-	bool error;
-	bool time_out;
+		struct sockaddr_in src_addr;
+		bool error;
+		bool time_out;
 	public:
 		// Use constructor to take all needed info from upper class.
 		~StopWaitClient();
-		void recv_message(int socketFd, DataSink sink);
+		void recv_message(int socketFd, DataSink *sink, unsigned int window);
 };
 
 

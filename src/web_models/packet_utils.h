@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include "packet.h"
 
-struct packet create_data_packet(char * data, uint16_t size, uint32_t seq_num);
+struct packet create_data_packet(const char * data, uint16_t size, uint32_t seq_num);
 struct packet create_data_packet(struct packet_core_data * core_data, uint32_t seq_num);
 struct ack_packet create_ack_packet(uint32_t seq_num);
 struct packet_core_data extract_pure_data(struct packet * pack);

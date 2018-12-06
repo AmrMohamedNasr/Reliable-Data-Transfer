@@ -16,10 +16,12 @@ using namespace std;
 
 class FileReader {
 	private:
-		ifstream ifs;
+		ifstream *ifs;
 	public:
+		FileReader();
 		void set_file(string path);
 		size_t read_chunk(int size, char * buff);
+		~FileReader();
 };
 
 
