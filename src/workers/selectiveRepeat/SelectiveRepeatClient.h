@@ -18,7 +18,6 @@ using namespace std;
 class SelectiveRepeatClient : public ClientWorker {
 	private:
 		uint32_t base_ack_no;
-		priority_queue<uint32_t> wnd;
 		map<uint32_t, struct packet_core_data> data_received;
 		struct sockaddr_in src_addr;
 		bool error;

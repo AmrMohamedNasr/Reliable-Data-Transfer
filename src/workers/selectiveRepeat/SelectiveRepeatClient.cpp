@@ -34,7 +34,6 @@ void SelectiveRepeatClient::recv_message(int socketFd, DataSink *sink, unsigned 
 					if (data_received.count(packet.seqno) == 0 && data_received.size() < window) {
 						data_received.insert(
 							pair<uint32_t, struct packet_core_data>(packet.seqno, core_data));
-						wnd.push(packet.seqno);
 					}
 					struct ack_packet ack_packet = create_ack_packet(packet.seqno);
 					send_ack_packet(socketFd, (const struct sockaddr *)&src_addr, &ack_packet);
@@ -53,11 +52,10 @@ void SelectiveRepeatClient::recv_message(int socketFd, DataSink *sink, unsigned 
 }
 
 void SelectiveRepeatClient::handleWindow(DataSink *sink) {
-	while (!wnd.empty() && wnd.top() == base_ack_no) {
-		uint32_t seqno = wnd.pop();
-		map<uint32_t, struct packet_core_data>::iterator it = data_received.find(seqno);
+	while (!data_received.empty() && data_received.find(base_ack_no) != data_received.end()) {
+		map<uint32_t, struct packet_core_data>::iterator it = data_received.find(base_ack_no);
 		struct packet_core_data data = it->second;
-		sink->feed_next_data(&data, seqno);
+		sink->feed_next_data(&data, base_ack_no);
 		base_ack_no++;
 		data_received.erase(it);
 	}

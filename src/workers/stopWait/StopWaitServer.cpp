@@ -23,13 +23,13 @@ StopWaitServer::~StopWaitServer() {
 
 void StopWaitServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 				int sendSocket, const struct sockaddr * clientAddr, unsigned int window) {
-	uint32_t seq_rand = 0;
+	uint32_t seq_no = 0;
 	struct sockaddr_in clAddr;
 	struct timeval tv;
 	struct timeval sendTime;
 	while(dataFeeder->hasNext()) {
 		struct packet_core_data packet_data = dataFeeder->getNextDataSegment();
-		struct packet packet = create_data_packet( &packet_data, seq_rand);
+		struct packet packet = create_data_packet( &packet_data, seq_no);
 		tv.tv_sec = TIMEOUT;
 		tv.tv_usec = 0;
 		gettimeofday(&sendTime, NULL);
@@ -51,7 +51,7 @@ void StopWaitServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 				tv.tv_usec = 0;
 				struct timeval sendTime;
 				gettimeofday(&sendTime, NULL);
-				if (!resend_packet(sendSocket, clientAddr, packet, &seq_rand, tv, sendTime)) {
+				if (!resend_packet(sendSocket, clientAddr, packet, &seq_no, tv, sendTime)) {
 					cout << "Ending program.." << endl;
 					return;
 				}
@@ -60,8 +60,8 @@ void StopWaitServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 				cout << "Error occurred on receiving packet..." << endl;
 				cout << "Ending program.." << endl;
 				return;
-			} else if (verifyChecksumAck(&ack_packet) && ack_packet.ackno == seq_rand + 1){
-				seq_rand++;
+			} else if (verifyChecksumAck(&ack_packet) && ack_packet.ackno == seq_no + 1){
+				seq_no++;
 			} else {
 				goto bad_pack;
 			}
@@ -72,7 +72,7 @@ void StopWaitServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 	}
 	struct packet_core_data packet_data;
 	memset(&packet_data, 0, sizeof(struct packet_core_data));
-	struct packet packet = create_data_packet( &packet_data, seq_rand);
+	struct packet packet = create_data_packet( &packet_data, seq_no);
 	if (send_packet(sendSocket, clientAddr, &packet)) {
 		tv.tv_sec = TIMEOUT;
 		tv.tv_usec = 0;
@@ -91,7 +91,7 @@ void StopWaitServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 			tv.tv_usec = 0;
 			struct timeval sendTime;
 			gettimeofday(&sendTime, NULL);
-			if (!resend_packet(sendSocket, clientAddr, packet, &seq_rand, tv, sendTime)) {
+			if (!resend_packet(sendSocket, clientAddr, packet, &seq_no, tv, sendTime)) {
 				cout << "Ending program.." << endl;
 				return;
 			}
@@ -100,8 +100,8 @@ void StopWaitServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 			cout << "Error occurred on receiving packet..." << endl;
 			cout << "Ending program.." << endl;
 			return;
-		} else if (verifyChecksumAck(&ack_packet) && ack_packet.ackno == seq_rand + 1){
-			seq_rand++;
+		} else if (verifyChecksumAck(&ack_packet) && ack_packet.ackno == seq_no + 1){
+			seq_no++;
 		} else {
 			goto bad_pack_2;
 		}
