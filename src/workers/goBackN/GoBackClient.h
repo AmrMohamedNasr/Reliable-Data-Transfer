@@ -10,14 +10,22 @@
 
 
 #include "../clientWorker.h"
+#include "../web_models/packet.h"
+#include "../web_models/packet_utils.h"
+#include "../utils/socketUtils.h"
+#include <sys/socket.h>
 
 class GoBackClient : public ClientWorker {
 	private:
-	//Implemention Dependant.
+	bool error;
+    	bool timeout;
+	uint32_t base_ack_no;
+     	struct sockaddr_in src_addr;
+     	
 	public:
 		// Use constructor to take all needed info from upper class.
 		~GoBackClient();
-		void recv_message(int socketFd, DataSink *sink, unsigned int window);
+		void recv_message(int socketFd, DataSink sink);
 };
 
 
