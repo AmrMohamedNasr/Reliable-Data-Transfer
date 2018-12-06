@@ -54,6 +54,8 @@ bool FileWriter::write_chunk(char * chunk, streamsize size) {
 
 FileWriter::~FileWriter() {
 	if (this->ofs != nullptr) {
+		this->ofs->close();
 		delete this->ofs;
+		this->ofs = nullptr;
 	}
 }

@@ -31,6 +31,8 @@ size_t FileReader::read_chunk(int size, char * buff) {
 
 FileReader::~FileReader() {
 	if (ifs != nullptr) {
+		ifs->close();
 		delete ifs;
+		ifs = nullptr;
 	}
 }

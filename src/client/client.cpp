@@ -14,6 +14,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <sys/time.h>
 
 #include <iostream>
 #include <cstring>
@@ -111,14 +112,23 @@ void Client::start(PROTO_TYPE type) {
 	}
 	cout << "Connection established : beginning file reception" << endl;
 	DataSink sink = DataSink();
-	//sink.set_write_file(this->filename);
-	sink.set_write_file("./ClientRecievedFile.zip");
+	sink.set_write_file(this->filename);
 	ClientWorker *worker = createClientWorker(type);
-	worker->recv_message(clientSocket, sink, this->recv_window);
+	struct timeval startTime;
+	gettimeofday(&startTime, NULL);
+	worker->recv_message(clientSocket, &sink, this->recv_window);
+	struct timeval endTime;
+	gettimeofday(&endTime, NULL);
+	long int timeTaken = ((endTime.tv_sec - startTime.tv_sec)*1000000L
+			   +endTime.tv_usec) - startTime.tv_usec;
 	delete worker;
 	cout << "Finished Reception !" << endl;
 	close(clientSocket);
 	cout << "Connection closed" << endl;
+	cout << "Reception Time : " << endl;
+	cout << "\tsec : " << (timeTaken / 1000000L) << " sec" << endl;
+	cout << "\tmsec : " << ((timeTaken / 1000L) % 1000L) << " msec" << endl;
+	cout << "\tMsec : " << (timeTaken % 1000L) << " Msec" << endl;
 }
 
 

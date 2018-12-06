@@ -14,7 +14,7 @@
 class ServerWorker {
 	public:
 		virtual ~ServerWorker(){}
-		virtual void send_message(DataFeeder dataFeeder, float loss_prob,
+		virtual void send_message(DataFeeder *dataFeeder, float loss_prob,
 				int sendSocket, const struct sockaddr * clientAddr, unsigned int window) = 0;
 };
 

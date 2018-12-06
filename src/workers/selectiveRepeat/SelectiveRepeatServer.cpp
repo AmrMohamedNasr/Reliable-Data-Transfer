@@ -11,7 +11,7 @@ SelectiveRepeatServer::~SelectiveRepeatServer() {
 }
 
 
-void SelectiveRepeatServer::send_message(DataFeeder dataFeeder, float loss_prob,
+void SelectiveRepeatServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 				int sendSocket, const struct sockaddr * clientAddr, unsigned int window) {
 
 }

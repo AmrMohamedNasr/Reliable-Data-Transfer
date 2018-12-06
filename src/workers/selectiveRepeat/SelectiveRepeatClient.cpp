@@ -10,7 +10,7 @@ SelectiveRepeatClient::~SelectiveRepeatClient() {
 
 }
 
-void SelectiveRepeatClient::recv_message(int socketFd, DataSink sink, unsigned int window) {
+void SelectiveRepeatClient::recv_message(int socketFd, DataSink *sink, unsigned int window) {
 
 }
 

@@ -14,10 +14,20 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <cstring>
+#include<sys/wait.h>
+#include<sys/types.h>
+#include <signal.h>
+#include <sys/time.h>
 
 #include <iostream>
 
 using namespace std;
+
+void my_handler(int s){
+	   printf("Server closed...");
+	   exit(0);
+}
+
 
 Server::Server(string path) {
 	bool error;
@@ -34,6 +44,12 @@ Server::Server(string path) {
 }
 
 void Server::start(PROTO_TYPE type) {
+	struct sigaction sigIntHandler;
+	sigIntHandler.sa_handler = my_handler;
+	sigemptyset(&sigIntHandler.sa_mask);
+	sigIntHandler.sa_flags = 0;
+	sigaction(SIGINT, &sigIntHandler, NULL);
+
 	int ntry = 0;
 	int listenSocket;
 	while((listenSocket = socket(AF_INET, SOCK_DGRAM, 0)) < 0 && ntry < RETRIES) {
@@ -95,15 +111,25 @@ void Server::start(PROTO_TYPE type) {
 			}
 			cout << pid << " : Sending file : " << filePath << endl;
 			ServerWorker * worker = createServerWorker(type);
-			worker->send_message(feeder,this->loss_prob, serverSocket,(sockaddr *)&clientAddr, this->slideWindow);
+			struct timeval startTime;
+			gettimeofday(&startTime, NULL);
+			worker->send_message(&feeder,this->loss_prob, serverSocket,(sockaddr *)&clientAddr, this->slideWindow);
+			struct timeval endTime;
+			gettimeofday(&endTime, NULL);
+			long int timeTaken = ((endTime.tv_sec - startTime.tv_sec)*1000000L
+			           +endTime.tv_usec) - startTime.tv_usec;
 			delete(worker);
 			close(serverSocket);
 			cout << pid << " : Finished operation" << endl;
+			printf("%u transmission time :\n\tsec : %ld sec\n\tmsec : %ld msec\n\tMsec : %ld Msec\n",
+				pid, (timeTaken / 1000000L), ((timeTaken / 1000L) % 1000L), (timeTaken % 1000L)
+				);
 			exit(0);
 		} else if (pid < 0) {
 			cout << "Failed to create child to handle request from : " << inet_ntoa(clientAddr.sin_addr) << ":"
 					<< ntohs(clientAddr.sin_port) << endl;
 		}
+		signal(SIGCHLD,SIG_IGN);
 	}
 	close(listenSocket);
 	cout << "Connection closed" << endl;
