@@ -15,13 +15,14 @@
 #include <sys/socket.h>
 class GoBackServer : public ServerWorker {
 	private:
-	int seq_num = 1;
-	int unacked_data_counter = 0;
-	int window;
+     	struct sockaddr_in src_addr;
+	uint32_t seqno;
+	unsigned int last_acked;
+	unsigned int unacked_data_counter;
 	bool error;
 	bool timeout;
-	struct ack_packet * acknoledgement;
-	vector <struct packet*> unacked_packets;
+	struct ack_packet ack_packet;
+	vector <struct packet> unacked_packet;
 	public:
 		~GoBackServer();
 		void send_message(DataFeeder dataFeeder, float loss_prob,
