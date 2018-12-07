@@ -36,7 +36,6 @@ void SelectiveRepeatServer::send_message(DataFeeder *dataFeeder, float loss_prob
 		if (base_seq_no + window > seq_no) {
 			struct packet_core_data packet_data = dataFeeder->getNextDataSegment();
 			struct packet packet = create_data_packet( &packet_data, seq_no);
-			struct timeval tv;
 			bool sent;
 			float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 			if (r < loss_prob) {
@@ -46,12 +45,12 @@ void SelectiveRepeatServer::send_message(DataFeeder *dataFeeder, float loss_prob
 				sent = send_packet(sendSocket, clientAddr, &packet);
 			}
 			if (sent) {
-				seq_no++;
-				tv.tv_sec = TIMEOUT;
-				tv.tv_usec = 0;
+				struct timeval sendTime;
+				gettimeofday(&sendTime, NULL);
 				data_sent.insert(
 						pair<uint32_t, struct packet>(seq_no, packet));
-				seqnums_sent.insert(pair<uint32_t, struct timeval>(seq_no, tv));
+				seqnums_sent.insert(pair<uint32_t, struct timeval>(seq_no, sendTime));
+				seq_no++;
 				while (hasData(sendSocket)) {
 					receive_ack(sendSocket, window);
 				}
@@ -77,8 +76,9 @@ bool SelectiveRepeatServer::updateTimers(int sendSocket, const struct sockaddr *
 		if (mini_timeout) {
 			struct packet packet = data_sent.find(not_acked.first)->second;
 			if (send_packet(sendSocket, clientAddr, &packet)) {
-				not_acked.second.tv_sec = TIMEOUT;
-				not_acked.second.tv_usec = 0;
+				struct timeval sendTime;
+				gettimeofday(&sendTime, NULL);
+				not_acked.second = sendTime;
 			} else {
 				cout << "Error on sending packets..." << endl;
 				return false;
@@ -90,7 +90,7 @@ bool SelectiveRepeatServer::updateTimers(int sendSocket, const struct sockaddr *
 
 bool SelectiveRepeatServer::receive_ack(int sendSocket, unsigned int window) {
 	struct timeval tv;
-	tv.tv_sec = TIMEOUT;
+	tv.tv_sec = 0;
 	tv.tv_usec = 0;
 	struct sockaddr_in clAddr;
 	struct ack_packet ack_packet = receive_ack_packet(sendSocket,
@@ -110,9 +110,11 @@ bool SelectiveRepeatServer::receive_ack(int sendSocket, unsigned int window) {
 			map<uint32_t, struct timeval>::iterator it = seqnums_sent.find(
 					ack_packet.ackno);
 			acks.insert(ack_packet.ackno);
+			cout << "packet " << ack_packet.ackno << "is acknowledged" << endl;
 			while (!acks.empty() && acks.find(base_seq_no) != acks.end()) {
 				acks.erase(acks.find(base_seq_no));
 				base_seq_no++;
+				cout << "forwarding window.\nBase Sequence Number = " << base_seq_no << endl;
 			}
 			seqnums_sent.erase(it);
 			data_sent.erase(data_sent.find(it->first));
