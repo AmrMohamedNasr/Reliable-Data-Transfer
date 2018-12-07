@@ -35,7 +35,7 @@ void GoBackServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 				    gettimeofday(&sendTime, NULL);
 				seq_no++;
 				unacked_packet.push_back(packet);
-				
+
 				while (hasData(sendSocket)) {
 					receive_ack(sendSocket, window);
 				}
@@ -70,7 +70,7 @@ void GoBackServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 		return false;
 	} else if (verifyChecksumAck(&ack_packet) && ack_packet.ackno >= base_seq_no
 			&& ack_packet.ackno < base_seq_no + window) {
-			    
+
 		        while (base_seq_no <= ack_packet.ackno) {
 		            unacked_packet.erase(unacked_packet.begin());
 		            base_seq_no++;
@@ -94,7 +94,7 @@ bool GoBackServer::updateTimer (int sendSocket, const struct sockaddr * clientAd
 		if (mini_timeout) {
 		    
 			cout << "Timeout"<< endl;
-			int i = 0; 
+			int i = 0;
 			while (i < unacked_packet.size()) {
 			    struct packet packet = unacked_packet[i];
 			    cout << "Retransmitting packet " << packet.seqno << endl;
