@@ -17,10 +17,7 @@
 #include <sys/time.h>
 #include <random>
 #define CLOSED_CYCLE 10
-int randomWithProb(double p) {
-    double rndDouble = (double)rand() / RAND_MAX;
-    return rndDouble > p;
-}
+
 
 SelectiveRepeatServer::~SelectiveRepeatServer() {
 

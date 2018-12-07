@@ -11,10 +11,7 @@
 
 using namespace std;
 
-int randomWithProb(double p) {
-    double rndDouble = (double)rand() / RAND_MAX;
-    return rndDouble > p;
-}
+
 
 void GoBackServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 				int sendSocket, const struct sockaddr * clientAddr, unsigned int window) {
@@ -99,7 +96,7 @@ bool GoBackServer::updateTimer (int sendSocket, const struct sockaddr * clientAd
 			cout << "Timeout"<< endl;
 			int i = 0; 
 			while (i < unacked_packet.size()) {
-			    struct packet packet = unacked_packet(i);
+			    struct packet packet = unacked_packet[i];
 			    cout << "Retransmitting packet " << packet.seqno << endl;
 			    i++;
     			bool sent;

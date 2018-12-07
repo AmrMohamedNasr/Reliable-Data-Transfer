@@ -22,7 +22,7 @@ class GoBackServer : public ServerWorker {
 	uint32_t seqno;
 	uint32_t base_seq_no;
 	bool error;
-	bool timeout;
+	bool time_out;
 	struct timeval sendTime;
 	struct ack_packet ack_packet;
 	vector <struct packet> unacked_packet;
