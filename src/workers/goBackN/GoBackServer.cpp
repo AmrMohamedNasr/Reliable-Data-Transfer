@@ -7,16 +7,28 @@
 #include "../../web_models/ack_packet.h"
 #include "../../data_managers/DataFeeder.h"
 using namespace std;
+int randomWithProb(double p) {
+    double rndDouble = (double)rand() / RAND_MAX;
+    return rndDouble > p;
+}
 
 void GoBackServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 				int sendSocket, const struct sockaddr * clientAddr, unsigned int window) {
     uint32_t seq_no = 0;
 	base_seq_no = 0;
     while(dataFeeder->hasNext()) {
-        if (base_seq_no + window >= seq_no) {
+        if (base_seq_no + window > seq_no) {
             struct packet_core_data packet_data = dataFeeder->getNextDataSegment();
 			struct packet packet = create_data_packet( &packet_data, seq_no);
-    		if (send_packet(sendSocket, clientAddr, &packet)) {
+    		bool sent;
+		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		if (r < loss_prob) {
+			sent = true;
+			cout << "Packet " << seq_no << " dropped" << endl;
+		} else {
+			sent = send_packet(sendSocket, clientAddr, &packet);
+			}
+			if (sent) {
 				seq_no++;
 				unacked_packet.push_back(packet);
 				
