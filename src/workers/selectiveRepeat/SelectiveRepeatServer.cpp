@@ -37,8 +37,15 @@ void SelectiveRepeatServer::send_message(DataFeeder *dataFeeder, float loss_prob
 			struct packet_core_data packet_data = dataFeeder->getNextDataSegment();
 			struct packet packet = create_data_packet( &packet_data, seq_no);
 			struct timeval tv;
-//			if (randomWithProb((double)(1 - loss_prob)) {
-			if (send_packet(sendSocket, clientAddr, &packet)) {
+			bool sent;
+			float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+			if (r < loss_prob) {
+				sent = true;
+				cout << "Packet " << seq_no << " dropped" << endl;
+			} else {
+				sent = send_packet(sendSocket, clientAddr, &packet);
+			}
+			if (sent) {
 				seq_no++;
 				tv.tv_sec = TIMEOUT;
 				tv.tv_usec = 0;
@@ -55,17 +62,6 @@ void SelectiveRepeatServer::send_message(DataFeeder *dataFeeder, float loss_prob
 				cout << "Error on sending..." << endl;
 				return;
 			}
-//			} else {
-//				seq_no++;
-//				data_sent.insert(pair<uint32_t, struct packet>(seq_no, packet));
-//				seqnums_sent.insert(pair<uint32_t, struct timeval>(seq_no, tv));
-//				while (hasData(sendSocket)) {
-//					receive_ack(sendSocket, window);
-//				}
-//				if (!updateTimers(sendSocket, clientAddr)) {
-//					return;
-//				}
-//			}
 		} else {
 			receive_ack(sendSocket, window);
 			updateTimers(sendSocket, clientAddr);
