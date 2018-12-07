@@ -20,8 +20,7 @@ class GoBackServer : public ServerWorker {
 	private:
 	struct sockaddr_in src_addr;
 	uint32_t seqno;
-	unsigned int last_acked;
-	unsigned int unacked_data_counter;
+	uint32_t base_seq_no;
 	bool error;
 	bool timeout;
 	struct ack_packet ack_packet;
