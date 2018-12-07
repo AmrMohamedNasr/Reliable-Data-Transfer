@@ -16,6 +16,8 @@ class StopWaitClient :  public ClientWorker {
 		struct sockaddr_in src_addr;
 		bool error;
 		bool time_out;
+		struct ack_packet last_pack;
+		bool sentOne;
 	public:
 		// Use constructor to take all needed info from upper class.
 		~StopWaitClient();

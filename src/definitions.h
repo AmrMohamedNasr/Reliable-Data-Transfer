@@ -9,7 +9,7 @@
 #define SRC_DEFINITIONS_H_
 
 #define RETRIES	3
-#define TIMEOUT	5
+#define TIMEOUT	1
 #define	PCK_DATA_SIZE	512
 #define PCK_HEADER_SIZE	8
 
