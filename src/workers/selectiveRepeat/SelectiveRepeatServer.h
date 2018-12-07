@@ -13,10 +13,13 @@
 #include <vector>
 #include <set>
 #include <netinet/in.h>
-
+#include <list>
+#include <unordered_map>
 class SelectiveRepeatServer : public ServerWorker {
 	private:
 		uint32_t base_seq_no;
+		list<uint32_t> sendOrder;
+		unordered_map<uint32_t, list<uint32_t>::iterator> sendOrderIterators;
 		map<uint32_t, struct timeval> seqnums_sent;
 		map<uint32_t, struct packet> data_sent;
 		set<uint32_t> acks;
@@ -24,7 +27,7 @@ class SelectiveRepeatServer : public ServerWorker {
 		bool error;
 		bool time_out;
 		int cycle;
-		bool updateTimers(int sendSocket, const struct sockaddr * clientAddr);
+		bool updateTimers(int sendSocket, const struct sockaddr * clientAddr, float loss_prob);
 		bool receive_ack(int sendSocket, unsigned int window);
 	public:
 		~SelectiveRepeatServer();

@@ -21,5 +21,5 @@ bool send_ack_packet(int sock, const struct sockaddr *dest_addr, struct ack_pack
 bool hasData(int sock);
 
 bool update_remaining_timeout(struct timeval * tv, struct timeval *old_time);
-
+bool update_remaining_timeout_nc(struct timeval * tv, struct timeval *old_time);
 #endif /* SRC_UTILS_SOCKETUTILS_H_ */

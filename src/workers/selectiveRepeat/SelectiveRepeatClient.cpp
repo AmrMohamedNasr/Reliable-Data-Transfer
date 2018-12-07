@@ -45,7 +45,7 @@ void SelectiveRepeatClient::recv_message(int socketFd, DataSink *sink, unsigned 
 					send_ack_packet(socketFd, (const struct sockaddr *)&src_addr, &ack_packet);
 					end = true;
 				}
-				cout << "packet " << packet.seqno << "Received" << endl;
+				//cout << "packet " << packet.seqno << "Received" << endl;
 			}
 		}
 

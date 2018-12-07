@@ -120,5 +120,15 @@ bool update_remaining_timeout(struct timeval * tv, struct timeval *old_time) {
 	return currentDiff <= diff;
 }
 
-
+bool update_remaining_timeout_nc(struct timeval * tv, struct timeval *old_time) {
+	struct timeval newTime;
+	gettimeofday(&newTime, NULL);
+	double new_time_in_mill = (newTime.tv_sec) * 1000000.0 + (newTime.tv_usec);
+	double old_time_in_mill = (old_time->tv_sec) * 1000000.0 + (old_time->tv_usec);
+	double diff = new_time_in_mill - old_time_in_mill;
+	double currentDiff = (tv->tv_sec) * 1000000.0 + (tv->tv_usec);
+	tv->tv_sec = tv->tv_sec - (diff / 1000000L);
+	tv->tv_usec = tv->tv_usec - (((long)diff) % 1000000);
+	return currentDiff <= diff;
+}
 

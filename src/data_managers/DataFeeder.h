@@ -17,6 +17,7 @@ class DataFeeder {
 	private:
 		FileHandler file_handler = FileHandler();
 		size_t remain_size;
+		bool lastPacket;
 	public:
 		DataFeeder();
 		bool readFile(string path);
