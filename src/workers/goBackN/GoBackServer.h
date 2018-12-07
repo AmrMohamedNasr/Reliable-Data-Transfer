@@ -25,6 +25,7 @@ class GoBackServer : public ServerWorker {
 	bool timeout;
 	struct ack_packet ack_packet;
 	vector <struct packet> unacked_packet;
+	bool receive_ack(int sendSocket, unsigned int window);
 	public:
 		~GoBackServer() {
 
