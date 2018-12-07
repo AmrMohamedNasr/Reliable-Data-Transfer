@@ -23,9 +23,11 @@ class GoBackServer : public ServerWorker {
 	uint32_t base_seq_no;
 	bool error;
 	bool timeout;
+	struct timeval sendTime;
 	struct ack_packet ack_packet;
 	vector <struct packet> unacked_packet;
 	bool receive_ack(int sendSocket, unsigned int window);
+	bool updateTimer (int sendSocket, const struct sockaddr * clientAddr, float loss_prob);
 	public:
 		~GoBackServer() {
 
