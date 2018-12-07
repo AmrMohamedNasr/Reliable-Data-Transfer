@@ -68,7 +68,7 @@ void StopWaitServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 				cout << "Error occurred on receiving packet..." << endl;
 				cout << "Ending program.." << endl;
 				return;
-			} else if (verifyChecksumAck(&ack_packet) && ack_packet.ackno == seq_no + 1){
+			} else if (verifyChecksumAck(&ack_packet) && ack_packet.ackno == seq_no){
 				seq_no++;
 			} else {
 				goto bad_pack;
@@ -110,7 +110,7 @@ bool StopWaitServer::resend_packet(int sendSocket, const struct sockaddr * clien
 				cout << "Time out occurred..." << endl;
 			} else if (error) {
 				cout << "Error occurred on receiving packet..." << endl;
-			} else if (!verifyChecksumAck(&ack_packet) || ack_packet.ackno != *seq_no + 1) {
+			} else if (!verifyChecksumAck(&ack_packet) || ack_packet.ackno != *seq_no) {
 				goto bad_pack;
 			} else {
 				*seq_no = *seq_no + 1;
