@@ -97,7 +97,6 @@ bool SelectiveRepeatServer::receive_ack(int sendSocket, unsigned int window) {
 			(struct sockaddr *) &clAddr, &error, &time_out, tv);
 	if (time_out) {
 		cout << "Time out occurred" << endl;
-
 		return false;
 	} else if (error) {
 		perror("Reception Error ");
