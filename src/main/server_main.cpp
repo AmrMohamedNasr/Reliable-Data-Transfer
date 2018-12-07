@@ -19,9 +19,10 @@ int main(int argc, char** argv) {
 	cout << "1. Stop & wait" << endl;
 	cout << "2. Selective Repeat" << endl;
 	cout << "3. Go Back N" << endl;
+	cout << "4. Selective Repeat with Congestion Control" << endl;
 	int id;
 	cin >> id;
-	if (id < 1 || id > 3) {
+	if (id < 1 || id > 4) {
 		cout << "Invalid rdt protocol number !" << endl;
 		exit(1);
 	}

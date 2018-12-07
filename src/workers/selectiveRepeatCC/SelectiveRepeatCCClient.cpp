@@ -1,10 +1,10 @@
 /*
- * SelectiveRepeatClient.cpp
+ * SelectiveRepeatCCClient.cpp
  *
- *  Created on: Dec 4, 2018
- *      Author: michael
+ *  Created on: Dec 7, 2018
+ *      Author: amrnasr
  */
-#include "SelectiveRepeatClient.h"
+#include "selectiveRepeatCCClient.h"
 #include <iostream>
 #include <unistd.h>
 #include <string.h>
@@ -12,11 +12,11 @@
 #include "../../web_models/packet_utils.h"
 #include "../../web_models/ack_packet.h"
 #include "../../data_managers/DataSink.h"
-SelectiveRepeatClient::~SelectiveRepeatClient() {
+SelectiveRepeatCCClient::~SelectiveRepeatCCClient() {
 
 }
 
-void SelectiveRepeatClient::recv_message(int socketFd, DataSink *sink, unsigned int window) {
+void SelectiveRepeatCCClient::recv_message(int socketFd, DataSink *sink, unsigned int window) {
 	memset(&src_addr, 0 , sizeof(sockaddr_in));
 	base_ack_no = 0;
 	bool end = false;
@@ -55,7 +55,7 @@ void SelectiveRepeatClient::recv_message(int socketFd, DataSink *sink, unsigned 
 	}
 }
 
-void SelectiveRepeatClient::handleWindow(DataSink *sink) {
+void SelectiveRepeatCCClient::handleWindow(DataSink *sink) {
 	while (!data_received.empty() && data_received.find(base_ack_no) != data_received.end()) {
 		map<uint32_t, struct packet_core_data>::iterator it = data_received.find(base_ack_no);
 		struct packet_core_data data = it->second;
@@ -64,4 +64,6 @@ void SelectiveRepeatClient::handleWindow(DataSink *sink) {
 		data_received.erase(it);
 	}
 }
+
+
 

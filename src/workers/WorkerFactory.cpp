@@ -13,6 +13,8 @@
 #include "selectiveRepeat/SelectiveRepeatServer.h"
 #include "stopWait/StopWaitClient.h"
 #include "stopWait/StopWaitServer.h"
+#include "selectiveRepeatCC/selectiveRepeatCCClient.h"
+#include "selectiveRepeatCC/selectiveRepeatCCServer.h"
 
 ClientWorker * createClientWorker(PROTO_TYPE type) {
 	switch(type) {
@@ -22,6 +24,8 @@ ClientWorker * createClientWorker(PROTO_TYPE type) {
 			return new SelectiveRepeatClient();
 		case PROTO_TYPE::WAIT_AND_STOP:
 			return new StopWaitClient();
+		case PROTO_TYPE::SELECTIVE_REPEAT_CC:
+			return new SelectiveRepeatCCClient();
 		default:
 			return nullptr;
 	}
@@ -35,6 +39,8 @@ ServerWorker * createServerWorker(PROTO_TYPE type) {
 				return new SelectiveRepeatServer();
 			case PROTO_TYPE::WAIT_AND_STOP:
 				return new StopWaitServer();
+			case PROTO_TYPE::SELECTIVE_REPEAT_CC:
+						return new SelectiveRepeatCCServer();
 			default:
 				return nullptr;
 		}
@@ -42,6 +48,8 @@ ServerWorker * createServerWorker(PROTO_TYPE type) {
 
 PROTO_TYPE obtainType(int id) {
 	switch(id) {
+		case 4:
+			return PROTO_TYPE::SELECTIVE_REPEAT_CC;
 		case 3:
 			return PROTO_TYPE::GO_BACK_N;
 		case 2:
@@ -60,6 +68,8 @@ string typeToString(PROTO_TYPE type) {
 			return string("Selective Repeat");
 		case PROTO_TYPE::WAIT_AND_STOP:
 			return string("Wait & Stop");
+		case PROTO_TYPE::SELECTIVE_REPEAT_CC:
+			return string("Selective Repeat with Congestion Control");
 		default:
 			return string("Wait & Stop");
 	}
