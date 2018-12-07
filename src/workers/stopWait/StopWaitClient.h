@@ -9,7 +9,7 @@
 #define SRC_WORKERS_STOPWAIT_STOPWAITCLIENT_H_
 
 #include "../clientWorker.h"
-
+#include "../../web_models/ack_packet.h"
 
 class StopWaitClient :  public ClientWorker {
 	private:
