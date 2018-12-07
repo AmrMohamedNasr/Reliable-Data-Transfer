@@ -11,7 +11,7 @@
 #include "clientWorker.h"
 #include "serverWorker.h"
 
-enum class PROTO_TYPE {WAIT_AND_STOP, SELECTIVE_REPEAT, GO_BACK_N};
+enum class PROTO_TYPE {WAIT_AND_STOP, SELECTIVE_REPEAT, GO_BACK_N, SELECTIVE_REPEAT_CC};
 
 ClientWorker * createClientWorker(PROTO_TYPE type);
 ServerWorker * createServerWorker(PROTO_TYPE type);
