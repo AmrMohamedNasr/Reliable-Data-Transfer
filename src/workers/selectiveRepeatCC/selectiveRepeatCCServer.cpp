@@ -142,27 +142,31 @@ bool SelectiveRepeatCCServer::updateTimers(int sendSocket, const struct sockaddr
 		bool mini_timeout = update_remaining_timeout_nc(&tv, &not_acked.second);
 		if (mini_timeout) {
 			window_decrease(window, ssthres, miniWin, true);
-			struct packet packet = data_sent.find(not_acked.first)->second;
-			cout << "Timeout packet " << packet.seqno << endl;
-			cout << "Retransmitting packet " << packet.seqno << endl;
-			bool sent;
-			float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-			if (r < loss_prob) {
-				sent = true;
-				cout << "Packet " << packet.seqno << " dropped" << endl;
+			if (data_sent.find(not_acked.first) != data_sent.end()) {
+				struct packet packet = data_sent.find(not_acked.first)->second;
+				cout << "Timeout packet " << packet.seqno << endl;
+				cout << "Retransmitting packet " << packet.seqno << endl;
+				bool sent;
+				float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+				if (r < loss_prob) {
+					sent = true;
+					cout << "Packet " << packet.seqno << " dropped" << endl;
+				} else {
+					sent = send_packet(sendSocket, clientAddr, &packet);
+				}
+				if (sent) {
+					struct timeval sendTime;
+					gettimeofday(&sendTime, NULL);
+					seqnums_sent[not_acked.first] = sendTime;
+					pack_id = sendOrder.erase(pack_id);
+					sendOrder.push_back(packet.seqno);
+					sendOrderIterators[packet.seqno] = prev(sendOrder.end());
+				} else {
+					cout << "Error on sending packets..." << endl;
+					return false;
+				}
 			} else {
-				sent = send_packet(sendSocket, clientAddr, &packet);
-			}
-			if (sent) {
-				struct timeval sendTime;
-				gettimeofday(&sendTime, NULL);
-				seqnums_sent[not_acked.first] = sendTime;
-				pack_id = sendOrder.erase(pack_id);
-				sendOrder.push_back(packet.seqno);
-				sendOrderIterators[packet.seqno] = prev(sendOrder.end());
-			} else {
-				cout << "Error on sending packets..." << endl;
-				return false;
+				return true;
 			}
 		} else {
 			return true;
@@ -248,14 +252,16 @@ void SelectiveRepeatCCServer::window_decrease(unsigned int *window, unsigned int
 	}
 	transmission_rounds_ssthres.push_back(*ssthres);
 	transmission_rounds_window.push_back(*window);
-	if (seq_no - 1 > *window + base_seq_no) {
-		for (unsigned int i = seq_no - 1; i > *window + base_seq_no; i--) {
-			out_of_window_packets[i] = data_sent[i];
-			seqnums_sent.erase(seqnums_sent.find(i));
-			data_sent.erase(data_sent.find(i));
-			sendOrder.erase(sendOrderIterators[i]);
-			sendOrderIterators.erase(sendOrderIterators.find(i));
+	if (seq_no - 1 >= *window + base_seq_no) {
+		for (unsigned int i = seq_no - 1; i >= *window + base_seq_no; i--) {
+			if (data_sent.find(i) != data_sent.end()) {
+				out_of_window_packets[i] = data_sent[i];
+				seqnums_sent.erase(seqnums_sent.find(i));
+				data_sent.erase(data_sent.find(i));
+				sendOrder.erase(sendOrderIterators[i]);
+				sendOrderIterators.erase(sendOrderIterators.find(i));
+			}
 		}
-		seq_no = *window + base_seq_no + 1;
+		seq_no = *window + base_seq_no;
 	}
 }
