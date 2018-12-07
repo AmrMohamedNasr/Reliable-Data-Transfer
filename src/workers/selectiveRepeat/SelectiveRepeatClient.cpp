@@ -28,7 +28,7 @@ void SelectiveRepeatClient::recv_message(int socketFd, DataSink *sink, unsigned 
 		if (error || time_out) {
 			cout << "error occurred receiving packet" << endl;
 		} else if (verifyChecksum(&packet)) {
-			if (! (packet.seqno < base_ack_no && ! (packet.seqno >= base_ack_no + window))) {
+			if (! (packet.seqno < base_ack_no) && ! (packet.seqno >= base_ack_no + window)) {
 				if (packet.len != PCK_HEADER_SIZE) {
 					struct packet_core_data core_data = extract_pure_data(&packet);
 					if (data_received.count(packet.seqno) == 0 && data_received.size() < window) {
@@ -45,6 +45,7 @@ void SelectiveRepeatClient::recv_message(int socketFd, DataSink *sink, unsigned 
 					send_ack_packet(socketFd, (const struct sockaddr *)&src_addr, &ack_packet);
 					end = true;
 				}
+				//cout << "packet " << packet.seqno << "Received" << endl;
 			}
 		}
 

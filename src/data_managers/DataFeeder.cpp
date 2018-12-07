@@ -10,6 +10,7 @@
 DataFeeder::DataFeeder() {
 	this->file_handler = FileHandler();
 	this->remain_size = 0;
+	this->lastPacket = false;
 }
 
 bool DataFeeder::readFile(string path) {
@@ -22,7 +23,7 @@ bool DataFeeder::readFile(string path) {
 }
 
 bool DataFeeder::hasNext() {
-	return remain_size > 0;
+	return remain_size > 0 || !lastPacket;
 }
 
 struct packet_core_data DataFeeder::getNextDataSegment() {
@@ -32,10 +33,12 @@ struct packet_core_data DataFeeder::getNextDataSegment() {
 		file_handler.read_chunk(sizeof(char[PCK_DATA_SIZE]), core_data.data);
 		remain_size = remain_size - sizeof(char[PCK_DATA_SIZE]);
 		core_data.size = sizeof(char[PCK_DATA_SIZE]);
-	} else {
+	} else if (remain_size != 0){
 		file_handler.read_chunk(remain_size, core_data.data);
 		core_data.size = remain_size;
 		remain_size = 0;
+	} else {
+		this->lastPacket = true;
 	}
 	return core_data;
 }
