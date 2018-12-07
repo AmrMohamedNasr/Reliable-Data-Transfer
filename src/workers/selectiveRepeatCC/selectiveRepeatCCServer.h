@@ -30,6 +30,7 @@ class SelectiveRepeatCCServer : public ServerWorker {
 		unsigned int dupAckIndex;
 		unsigned int successAcks;
 		struct sockaddr_in src_addr;
+		float trans_round;
 		bool error;
 		bool time_out;
 		bool updateTimers(int sendSocket, const struct sockaddr * clientAddr, float loss_prob,
@@ -39,6 +40,7 @@ class SelectiveRepeatCCServer : public ServerWorker {
 	public:
 		vector<unsigned int> transmission_rounds_window;
 		vector<unsigned int> transmission_rounds_ssthres;
+		vector<float> transmission_rounds;
 		SelectiveRepeatCCServer();
 		~SelectiveRepeatCCServer();
 		void send_message(DataFeeder * dataFeeder, float loss_prob,

@@ -34,6 +34,8 @@ SelectiveRepeatCCServer::SelectiveRepeatCCServer() {
 	out_of_window_packets = map<uint32_t, struct packet> ();
 	transmission_rounds_window = vector<unsigned int> ();
 	transmission_rounds_ssthres = vector<unsigned int> ();
+	transmission_rounds = vector<float>();
+	trans_round = 0;
 	FileHandler handl = FileHandler();
 	if (handl.check_file("control.cc")) {
 		ifstream in("control.cc");
@@ -53,7 +55,7 @@ void write_congestion_rounds(ServerWorker *worker) {
 	SelectiveRepeatCCServer serv = *((SelectiveRepeatCCServer *)worker);
 	ofstream out("trans_rounds.cc");
 	for (unsigned i = 0; i < serv.transmission_rounds_ssthres.size(); i++) {
-		out << (i+1) << "\t" << serv.transmission_rounds_window[i] << "\t" << serv.transmission_rounds_ssthres[i] << endl;
+		out << serv.transmission_rounds[i] << "\t" << serv.transmission_rounds_window[i] << "\t" << serv.transmission_rounds_ssthres[i] << endl;
 	}
 }
 
@@ -62,12 +64,14 @@ void SelectiveRepeatCCServer::send_message(DataFeeder *dataFeeder, float loss_pr
 	seq_no = 0;
 	base_seq_no = 0;
 	sendOrder = list<uint32_t>();
-
+	trans_round = 1;
 	unsigned int window = 1;
 	unsigned int ssthress = org_window;
 	unsigned int miniWin = 0;
 	transmission_rounds_ssthres.push_back(ssthress);
 	transmission_rounds_window.push_back(window);
+	transmission_rounds.push_back(trans_round);
+	trans_round++;
 	while(dataFeeder->hasNext()) {
 		if (base_seq_no + window > seq_no) {
 			struct packet packet;
@@ -208,12 +212,16 @@ bool SelectiveRepeatCCServer::receive_ack(int sendSocket, unsigned int* window,
 					*miniWin = 0;
 					transmission_rounds_ssthres.push_back(*ssthres);
 					transmission_rounds_window.push_back(*window);
+					transmission_rounds.push_back(trans_round);
+					trans_round++;
 				}
 			} else {
 				*window += 1;
 				if (*window == 2 * transmission_rounds_window.back()) {
 					transmission_rounds_ssthres.push_back(*ssthres);
 					transmission_rounds_window.push_back(*window);
+					transmission_rounds.push_back(trans_round);
+					trans_round++;
 				}
 			}
 			map<uint32_t, struct timeval>::iterator it = seqnums_sent.find(
@@ -243,6 +251,9 @@ bool SelectiveRepeatCCServer::receive_ack(int sendSocket, unsigned int* window,
 
 void SelectiveRepeatCCServer::window_decrease(unsigned int *window, unsigned int *ssthres,
 		unsigned int *miniWin, bool timeout) {
+	transmission_rounds_ssthres.push_back(*ssthres);
+	transmission_rounds_window.push_back(*window);
+	transmission_rounds.push_back(trans_round - 0.5);
 	*ssthres = *window / 2;
 	*miniWin = 0;
 	if (timeout) {
@@ -252,6 +263,8 @@ void SelectiveRepeatCCServer::window_decrease(unsigned int *window, unsigned int
 	}
 	transmission_rounds_ssthres.push_back(*ssthres);
 	transmission_rounds_window.push_back(*window);
+	transmission_rounds.push_back(trans_round);
+	trans_round++;
 	if (seq_no - 1 >= *window + base_seq_no) {
 		for (unsigned int i = seq_no - 1; i >= *window + base_seq_no; i--) {
 			if (data_sent.find(i) != data_sent.end()) {
