@@ -8,6 +8,7 @@
 #include "../parser/ArgumentParser.h"
 #include "../definitions.h"
 #include "../web_models/packet_utils.h"
+#include "../workers/selectiveRepeatCC/selectiveRepeatCCServer.h"
 #include "../utils/socketUtils.h"
 
 #include <sys/socket.h>
@@ -118,6 +119,9 @@ void Server::start(PROTO_TYPE type) {
 			gettimeofday(&endTime, NULL);
 			long int timeTaken = ((endTime.tv_sec - startTime.tv_sec)*1000000L
 			           +endTime.tv_usec) - startTime.tv_usec;
+			if (type == PROTO_TYPE::SELECTIVE_REPEAT_CC) {
+				write_congestion_rounds(worker);
+			}
 			delete(worker);
 			close(serverSocket);
 			cout << pid << " : Finished operation" << endl;
