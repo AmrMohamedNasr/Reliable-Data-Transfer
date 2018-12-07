@@ -33,7 +33,15 @@ void StopWaitServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 		tv.tv_sec = TIMEOUT;
 		tv.tv_usec = 0;
 		gettimeofday(&sendTime, NULL);
-		if (send_packet(sendSocket, clientAddr, &packet)) {
+		bool sent;
+		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		if (r < loss_prob) {
+			sent = true;
+			cout << "Packet " << seq_no << " dropped" << endl;
+		} else {
+			sent = send_packet(sendSocket, clientAddr, &packet);
+		}
+		if (sent) {
 			tv.tv_sec = TIMEOUT;
 			tv.tv_usec = 0;
 			struct timeval sendTime;
@@ -51,7 +59,7 @@ void StopWaitServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 				tv.tv_usec = 0;
 				struct timeval sendTime;
 				gettimeofday(&sendTime, NULL);
-				if (!resend_packet(sendSocket, clientAddr, packet, &seq_no, tv, sendTime)) {
+				if (!resend_packet(sendSocket, clientAddr, packet, &seq_no, tv, sendTime, loss_prob)) {
 					cout << "Ending program.." << endl;
 					return;
 				}
@@ -73,7 +81,15 @@ void StopWaitServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 	struct packet_core_data packet_data;
 	memset(&packet_data, 0, sizeof(struct packet_core_data));
 	struct packet packet = create_data_packet( &packet_data, seq_no);
-	if (send_packet(sendSocket, clientAddr, &packet)) {
+	bool sent;
+	float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	if (r < loss_prob) {
+		cout << "Packet " << seq_no << " Dropped" << endl;
+		sent = true;
+	} else {
+		sent = send_packet(sendSocket, clientAddr, &packet);
+	}
+	if (sent) {
 		tv.tv_sec = TIMEOUT;
 		tv.tv_usec = 0;
 		struct timeval sendTime;
@@ -91,7 +107,7 @@ void StopWaitServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 			tv.tv_usec = 0;
 			struct timeval sendTime;
 			gettimeofday(&sendTime, NULL);
-			if (!resend_packet(sendSocket, clientAddr, packet, &seq_no, tv, sendTime)) {
+			if (!resend_packet(sendSocket, clientAddr, packet, &seq_no, tv, sendTime, loss_prob)) {
 				cout << "Ending program.." << endl;
 				return;
 			}
@@ -112,12 +128,20 @@ void StopWaitServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 }
 
 bool StopWaitServer::resend_packet(int sendSocket, const struct sockaddr * clientAddr,
-		struct packet packet, uint32_t *seq_no, struct timeval tv, struct timeval sendTime) {
+		struct packet packet, uint32_t *seq_no, struct timeval tv, struct timeval sendTime, float loss_prob) {
 	int i = 1;
 	struct sockaddr_in clAddr;
 	while(i <= RETRIES) {
-		cout << "Retrying again for "<< i << "out of " << RETRIES << " retries." << endl;
-		if (send_packet(sendSocket, clientAddr, &packet)) {
+		cout << "Retransmitting again for "<< i << " out of " << RETRIES << " retries for packet "<< packet.seqno << endl;
+		bool sent;
+		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		if (r < loss_prob) {
+			cout << "Packet " << *seq_no << " Dropped" << endl;
+			sent = true;
+		} else {
+			sent = send_packet(sendSocket, clientAddr, &packet);
+		}
+		if (sent) {
 			tv.tv_sec = TIMEOUT;
 			tv.tv_usec = 0;
 			struct timeval sendTime;

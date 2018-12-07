@@ -16,6 +16,7 @@
 #include <sys/socket.h>
 #include "serial.h"
 #include <sys/time.h>
+#include <errno.h>
 
 using namespace std;
 
@@ -28,9 +29,11 @@ struct packet receive_packet(int sock, struct sockaddr *src_addr, bool *error, b
 	unsigned char buff[PCK_DATA_SIZE + PCK_HEADER_SIZE];
 	if (recvfrom(sock, buff,
 			PCK_DATA_SIZE + PCK_HEADER_SIZE, 0, src_addr, &addrlen) > 0) {
+			*error = false;
+			*time_out = false;
 			return deserialize_packet(buff);
 	} else {
-		if ((errno != EAGAIN) && (errno != EWOULDBLOCK)) {
+		if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
 			*error = true;
 			*time_out = true;
 		} else {
@@ -65,9 +68,11 @@ struct ack_packet receive_ack_packet(int sock, struct sockaddr *src_addr, bool *
 	unsigned char buff[PCK_HEADER_SIZE];
 	if (recvfrom(sock, buff,
 			PCK_HEADER_SIZE, 0, src_addr, &addrlen) > 0) {
+			*error = false;
+			*time_out = false;
 			return deserialize_ackpacket(buff);
 	} else {
-		if ((errno != EAGAIN) && (errno != EWOULDBLOCK)) {
+		if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
 			*error = true;
 			*time_out = true;
 		} else {

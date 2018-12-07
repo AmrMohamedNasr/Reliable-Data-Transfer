@@ -15,7 +15,7 @@ class StopWaitServer : public ServerWorker {
 		bool error;
 		bool time_out;
 		bool resend_packet(int sendSocket, const struct sockaddr * clientAddr,
-				struct packet packet, uint32_t *seq_no, struct timeval tv, struct timeval sendTime);
+				struct packet packet, uint32_t *seq_no, struct timeval tv, struct timeval sendTime, float loss_prob);
 	public:
 		~StopWaitServer();
 		void send_message(DataFeeder *dataFeeder, float loss_prob,
