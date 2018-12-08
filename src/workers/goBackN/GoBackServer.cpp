@@ -18,25 +18,26 @@ void GoBackServer::send_message(DataFeeder *dataFeeder, float loss_prob,
     uint32_t seq_no = 0;
     base_seq_no = 0;
     
-    while(dataFeeder->hasNext()) {
-        if (base_seq_no + window > seq_no) {
-            struct packet_core_data packet_data = dataFeeder->getNextDataSegment();
-			struct packet packet = create_data_packet( &packet_data, seq_no);
-    		bool sent;
-		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-		if (r < loss_prob) {
-			sent = true;
-			cout << "Packet " << seq_no << " dropped" << endl;
-		} else {
-			sent = send_packet(sendSocket, clientAddr, &packet);
+    while (dataFeeder->hasNext()) {
+		if (base_seq_no + window > seq_no) {
+			struct packet_core_data packet_data =
+					dataFeeder->getNextDataSegment();
+			struct packet packet = create_data_packet(&packet_data, seq_no);
+			bool sent;
+			float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+			if (r < loss_prob) {
+				sent = true;
+				cout << "Packet " << seq_no << " dropped" << endl;
+			} else {
+				sent = send_packet(sendSocket, clientAddr, &packet);
 			}
 			if (sent) {
-			    if (unacked_packet.size() == 0) {
-				    struct timeval sendTime2;	
-				    gettimeofday(&sendTime2, NULL);
-				    sendTime.tv_sec = sendTime2.tv_sec;
-				    sendTime.tv_usec = sendTime2.tv_usec;
-			    }
+				if (unacked_packet.size() == 0) {
+					struct timeval sendTime2;
+					gettimeofday(&sendTime2, NULL);
+					sendTime.tv_sec = sendTime2.tv_sec;
+					sendTime.tv_usec = sendTime2.tv_usec;
+				}
 				seq_no++;
 				unacked_packet.push_back(packet);
 
@@ -48,24 +49,25 @@ void GoBackServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 				cout << "Error on sending..." << endl;
 				return;
 			}
-        } else {
-            bool no_err = true;
+		} else {
+			bool no_err = true;
 			while (no_err && hasData(sendSocket)) {
 				no_err = receive_ack(sendSocket, window);
 			}
-			if (!updateTimers(sendSocket, clientAddr, loss_prob)) {
+			if (!updateTimer(sendSocket, clientAddr, loss_prob)) {
 				return;
 			}
-        }
-    } while (unacked_packet.size() != 0) {
-	bool no_err = receive_ack(sendSocket, window);
-		while (no_err && hasData(sendSocket)) {
-			no_err = receive_ack(sendSocket, window);
-		}
-		if (!updateTimers(sendSocket, clientAddr, loss_prob)) {
-			return;
 		}
 	}
+//	while (unacked_packet.size() != 0) {
+//		bool no_err = receive_ack(sendSocket, window);
+//		while (no_err && hasData(sendSocket)) {
+//			no_err = receive_ack(sendSocket, window);
+//		}
+//		if (!updateTimers(sendSocket, clientAddr, loss_prob)) {
+//			return;
+//		}
+//	}
   }
   
   bool GoBackServer::receive_ack(int sendSocket, unsigned int window) {
@@ -129,11 +131,13 @@ bool GoBackServer::updateTimer (int sendSocket, const struct sockaddr * clientAd
     			    
     				sent = send_packet(sendSocket, clientAddr, &packet);
     			}
-    			if (sent && i == 0) {
-    				struct timeval sendTime2;	
-				gettimeofday(&sendTime2, NULL);
-				sendTime.tv_sec = sendTime2.tv_sec;
-				sendTime.tv_usec = sendTime2.tv_usec;
+    			if (sent) {
+    				if (i == 0) {
+    					struct timeval sendTime2;
+    					gettimeofday(&sendTime2, NULL);
+    					sendTime.tv_sec = sendTime2.tv_sec;
+    					sendTime.tv_usec = sendTime2.tv_usec;
+    				}
     			} else {
     				cout << "Error on sending packets..." << endl;
     				return false;

@@ -24,7 +24,7 @@ void GoBackClient::recv_message(int socketFd, DataSink *sink, unsigned int windo
 			cout << "error occurred receiving packet" << endl;
 		} else if (verifyChecksum(&packet)) {
 			if (packet.len != PCK_HEADER_SIZE) {
-				if (packet.seqno == base_ack_no + 1) {
+				if (packet.seqno == base_ack_no) {
 					base_ack_no++;
 					struct packet_core_data core_data = extract_pure_data(
 							&packet);
