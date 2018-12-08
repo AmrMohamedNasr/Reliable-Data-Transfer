@@ -54,7 +54,7 @@ void StopWaitServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 					sendSocket, (struct sockaddr *)&clAddr, &error, &time_out, tv);
 			}
 			if (time_out || mini_timeout) {
-				cout << "Time out occurred" << endl;
+				cout << "Time out occurred " << packet.seqno << endl;
 				tv.tv_sec = TIMEOUT;
 				tv.tv_usec = 0;
 				struct timeval sendTime;
@@ -107,7 +107,7 @@ bool StopWaitServer::resend_packet(int sendSocket, const struct sockaddr * clien
 						sendSocket, (struct sockaddr *)&clAddr, &error, &time_out, tv);
 			}
 			if (time_out || mini_timeout) {
-				cout << "Time out occurred..." << endl;
+				cout << "Time out occurred " << packet.seqno << endl;
 			} else if (error) {
 				cout << "Error occurred on receiving packet..." << endl;
 			} else if (!verifyChecksumAck(&ack_packet) || ack_packet.ackno != *seq_no) {
