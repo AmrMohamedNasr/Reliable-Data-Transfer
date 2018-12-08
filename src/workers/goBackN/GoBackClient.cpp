@@ -33,7 +33,7 @@ void GoBackClient::recv_message(int socketFd, DataSink *sink, unsigned int windo
 							packet.seqno);
 					send_ack_packet(socketFd,
 							(const struct sockaddr *) &src_addr, &ack_packet);
-					cout << "Receving packet " << ack_packet.ackno << endl;
+					//cout << "Receving packet " << ack_packet.ackno << endl;
 				}
 			} else {
 				struct ack_packet ack_packet = create_ack_packet(packet.seqno);
