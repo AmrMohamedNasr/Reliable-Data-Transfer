@@ -34,7 +34,7 @@ void SelectiveRepeatClient::recv_message(int socketFd, DataSink *sink, unsigned 
 			} else if (! (packet.seqno < base_ack_no) && ! (packet.seqno >= base_ack_no + window)) {
 				if (packet.len != PCK_HEADER_SIZE) {
 					struct packet_core_data core_data = extract_pure_data(&packet);
-					if (data_received.count(packet.seqno) == 0 && data_received.size() < window) {
+					if (!data_received.count(packet.seqno)) {
 						data_received.insert(
 							pair<uint32_t, struct packet_core_data>(packet.seqno, core_data));
 					}

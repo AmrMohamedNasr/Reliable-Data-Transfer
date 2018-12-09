@@ -131,6 +131,7 @@ bool SelectiveRepeatServer::receive_ack(int sendSocket, unsigned int window) {
 				(struct sockaddr *) &clAddr, &error, &time_out, tv);
 	}
 	if (time_out || mini_timeout) {
+		// TODO update timer as in update timers function.
 		cout << "Time out occurred " << sendOrder.front() << endl;
 		return false;
 	} else if (error) {
