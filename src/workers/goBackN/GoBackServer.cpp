@@ -59,27 +59,31 @@ void GoBackServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 			}
 		}
 	}
-//	while (unacked_packet.size() != 0) {
-//		bool no_err = receive_ack(sendSocket, window);
-//		while (no_err && hasData(sendSocket)) {
-//			no_err = receive_ack(sendSocket, window);
-//		}
-//		if (!updateTimers(sendSocket, clientAddr, loss_prob)) {
-//			return;
-//		}
-//	}
+	while (unacked_packet.size() != 0) {
+		bool no_err = true;
+		while (no_err && hasData(sendSocket)) {
+			no_err = receive_ack(sendSocket, window);
+		}
+		if (!updateTimer(sendSocket, clientAddr, loss_prob)) {
+			return;
+		}
+	}
   }
   
   bool GoBackServer::receive_ack(int sendSocket, unsigned int window) {
-	struct timeval tv;
-	tv.tv_sec = 0;
+	  struct timeval tv;
+	tv.tv_sec = TIMEOUT;
 	tv.tv_usec = 0;
 	struct sockaddr_in clAddr;
-	struct ack_packet ack_packet = receive_ack_packet(sendSocket,
-			(struct sockaddr *) &clAddr, &error, &time_out, tv);
-	if (time_out) {
-		cout << "Time out occurred" << endl;
-
+	bool mini_timeout = update_remaining_timeout_nc(&tv, &sendTime);
+	struct ack_packet ack_packet;
+	if (!mini_timeout || hasData(sendSocket)) {
+		mini_timeout = false;
+		ack_packet = receive_ack_packet(sendSocket,
+				(struct sockaddr *) &clAddr, &error, &time_out, tv);
+	}
+	if (time_out || mini_timeout) {
+		cout << "Time out occurred " << base_seq_no << endl;
 		return false;
 	} else if (error) {
 		perror("Reception Error ");
@@ -89,21 +93,18 @@ void GoBackServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 		return false;
 	} else if (verifyChecksumAck(&ack_packet) && ack_packet.ackno >= base_seq_no
 			&& ack_packet.ackno < base_seq_no + window) {
-
-		        while (base_seq_no <= ack_packet.ackno) {
-		            unacked_packet.erase(unacked_packet.begin());
-		            base_seq_no++;
-		        }
-		        if (unacked_packet.size() != 0){
-				    struct timeval sendTime2;	
-				    gettimeofday(&sendTime2, NULL);
-				    sendTime.tv_sec = sendTime2.tv_sec;
-				    sendTime.tv_usec = sendTime2.tv_usec;
-			}
-		        
-		return true;
+				while (base_seq_no <= ack_packet.ackno) {
+					unacked_packet.erase(unacked_packet.begin());
+					base_seq_no++;
+				}
+				if (unacked_packet.size() != 0) {
+					struct timeval sendTime2;
+					gettimeofday(&sendTime2, NULL);
+					sendTime.tv_sec = sendTime2.tv_sec;
+					sendTime.tv_usec = sendTime2.tv_usec;
+				}
+				return true;
 	}
-
 	return false;
 }
 
@@ -116,8 +117,8 @@ bool GoBackServer::updateTimer (int sendSocket, const struct sockaddr * clientAd
 		bool mini_timeout = update_remaining_timeout_nc(&tv, &sendTime);
 		if (mini_timeout) {
 		    
-			cout << "Timeout"<< endl;
-			int i = 0;
+			cout << "Timeout " << base_seq_no << endl;
+			unsigned int i = 0;
 			while (i < unacked_packet.size()) {
 			    struct packet packet = unacked_packet[i];
 			    cout << "Retransmitting packet " << packet.seqno << endl;
@@ -142,7 +143,7 @@ bool GoBackServer::updateTimer (int sendSocket, const struct sockaddr * clientAd
     				cout << "Error on sending packets..." << endl;
     				return false;
     			}
-			i++;
+    			i++;
 			}
 		} else {
 			return true;

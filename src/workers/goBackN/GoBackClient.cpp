@@ -22,28 +22,24 @@ void GoBackClient::recv_message(int socketFd, DataSink *sink, unsigned int windo
 				(struct sockaddr *) &src_addr, &error, &timeout, tv);
 		if (error || timeout) {
 			cout << "error occurred receiving packet" << endl;
-		} else if (verifyChecksum(&packet)) {
+		} else if (verifyChecksum(&packet) && packet.seqno == base_ack_no) {
 			if (packet.len != PCK_HEADER_SIZE) {
-				if (packet.seqno == base_ack_no) {
-					base_ack_no++;
-					struct packet_core_data core_data = extract_pure_data(
-							&packet);
-					sink->feed_next_data(&core_data, packet.seqno);
-					struct ack_packet ack_packet = create_ack_packet(
-							packet.seqno);
-					send_ack_packet(socketFd,
-							(const struct sockaddr *) &src_addr, &ack_packet);
-					//cout << "Receving packet " << ack_packet.ackno << endl;
-				}
+				base_ack_no++;
+				struct packet_core_data core_data = extract_pure_data(
+						&packet);
+				sink->feed_next_data(&core_data, packet.seqno);
+				struct ack_packet ack_packet = create_ack_packet(
+						packet.seqno);
+				send_ack_packet(socketFd,
+						(const struct sockaddr *) &src_addr, &ack_packet);
+				//cout << "Receving packet " << ack_packet.ackno << endl;
 			} else {
+				base_ack_no++;
 				struct ack_packet ack_packet = create_ack_packet(packet.seqno);
 				send_ack_packet(socketFd, (const struct sockaddr *) &src_addr,
 						&ack_packet);
 				end = true;
 			}
-	//free (&src_addr);
       }
     }
-     
-  
 }
