@@ -75,7 +75,7 @@ void Client::start(PROTO_TYPE type) {
 	struct packet pack = create_data_packet(this->filename.c_str(), (uint16_t)this->filename.size(), 0);
 	bool error = true;
 	struct timeval tv;
-	tv.tv_sec = TIMEOUT;
+	tv.tv_sec = TIMEOUT_CLIENT;
 	tv.tv_usec = 0;
 	setsockopt(clientSocket, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
 	ntry = 0;
