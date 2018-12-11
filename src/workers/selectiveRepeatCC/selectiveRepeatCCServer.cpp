@@ -122,8 +122,7 @@ void SelectiveRepeatCCServer::send_message(DataFeeder *dataFeeder, float loss_pr
 		}
 	}
 	while(!seqnums_sent.empty()) {
-		bool no_err = receive_ack(sendSocket, &window,
-				&ssthress, &miniWin);
+		bool no_err = true;
 		while (no_err && hasData(sendSocket)) {
 			no_err = receive_ack(sendSocket, &window,
 					&ssthress, &miniWin);
@@ -187,7 +186,8 @@ bool SelectiveRepeatCCServer::receive_ack(int sendSocket, unsigned int* window,
 	struct sockaddr_in clAddr;
 	bool mini_timeout = update_remaining_timeout_nc(&tv, &(seqnums_sent[sendOrder.front()]));
 	struct ack_packet ack_packet;
-	if (!mini_timeout) {
+	if (!mini_timeout || hasData(sendSocket)) {
+		mini_timeout = false;
 		ack_packet = receive_ack_packet(sendSocket,
 				(struct sockaddr *) &clAddr, &error, &time_out, tv);
 	}

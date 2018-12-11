@@ -82,10 +82,10 @@ void StopWaitServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 
 bool StopWaitServer::resend_packet(int sendSocket, const struct sockaddr * clientAddr,
 		struct packet packet, uint32_t *seq_no, struct timeval tv, struct timeval sendTime, float loss_prob) {
-	int i = 1;
 	struct sockaddr_in clAddr;
-	while(i <= RETRIES) {
-		cout << "Retransmitting again for "<< i << " out of " << RETRIES << " retries for packet "<< packet.seqno << endl;
+	bool retrans_success = false;
+	while(!retrans_success) {
+		cout << "Retransmitting packet "<< packet.seqno << endl;
 		bool sent;
 		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 		if (r < loss_prob) {
@@ -114,15 +114,14 @@ bool StopWaitServer::resend_packet(int sendSocket, const struct sockaddr * clien
 				goto bad_pack;
 			} else {
 				*seq_no = *seq_no + 1;
-				return true;
+				retrans_success = true;
 			}
 		} else {
 			cout << "Error on sending..." << endl;
 			return false;
 		}
-		i++;
 	}
-	return false;
+	return retrans_success;
 }
 
 
