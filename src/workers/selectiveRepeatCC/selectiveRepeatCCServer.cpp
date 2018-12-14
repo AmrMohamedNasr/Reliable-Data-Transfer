@@ -140,8 +140,8 @@ bool SelectiveRepeatCCServer::updateTimers(int sendSocket, const struct sockaddr
 	while (pack_id  != sendOrder.end()) {
 		pair<uint32_t, struct timeval> not_acked = *seqnums_sent.find(*pack_id);
 		struct timeval tv;
-		tv.tv_sec = TIMEOUT;
-		tv.tv_usec = 0;
+		tv.tv_sec = TIMEOUT_SEC;
+		tv.tv_usec = TIMEOUT_MSEC;
 		bool mini_timeout = update_remaining_timeout_nc(&tv, &not_acked.second);
 		if (mini_timeout) {
 			window_decrease(window, ssthres, miniWin, true);
@@ -181,8 +181,8 @@ bool SelectiveRepeatCCServer::updateTimers(int sendSocket, const struct sockaddr
 bool SelectiveRepeatCCServer::receive_ack(int sendSocket, unsigned int* window,
 		unsigned int *ssthres, unsigned int *miniWin) {
 	struct timeval tv;
-	tv.tv_sec = TIMEOUT;
-	tv.tv_usec = 0;
+	tv.tv_sec = TIMEOUT_SEC;
+	tv.tv_usec = TIMEOUT_MSEC;
 	struct sockaddr_in clAddr;
 	bool mini_timeout = update_remaining_timeout_nc(&tv, &(seqnums_sent[sendOrder.front()]));
 	struct ack_packet ack_packet;

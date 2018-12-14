@@ -86,8 +86,8 @@ bool SelectiveRepeatServer::updateTimers(int sendSocket, const struct sockaddr *
 	while (pack_id  != sendOrder.end()) {
 		pair<uint32_t, struct timeval> not_acked = *seqnums_sent.find(*pack_id);
 		struct timeval tv;
-		tv.tv_sec = TIMEOUT;
-		tv.tv_usec = 0;
+		tv.tv_sec = TIMEOUT_SEC;
+		tv.tv_usec = TIMEOUT_MSEC;
 		bool mini_timeout = update_remaining_timeout_nc(&tv, &not_acked.second);
 		if (mini_timeout) {
 			struct packet packet = data_sent.find(not_acked.first)->second;
@@ -121,8 +121,8 @@ bool SelectiveRepeatServer::updateTimers(int sendSocket, const struct sockaddr *
 
 bool SelectiveRepeatServer::receive_ack(int sendSocket, unsigned int window) {
 	struct timeval tv;
-	tv.tv_sec = TIMEOUT;
-	tv.tv_usec = 0;
+	tv.tv_sec = TIMEOUT_SEC;
+	tv.tv_usec = TIMEOUT_MSEC;
 	struct sockaddr_in clAddr;
 	bool mini_timeout = update_remaining_timeout_nc(&tv, &(seqnums_sent[sendOrder.front()]));
 	struct ack_packet ack_packet;
@@ -132,7 +132,6 @@ bool SelectiveRepeatServer::receive_ack(int sendSocket, unsigned int window) {
 				(struct sockaddr *) &clAddr, &error, &time_out, tv);
 	}
 	if (time_out || mini_timeout) {
-		// TODO update timer as in update timers function.
 		cout << "Time out occurred " << sendOrder.front() << endl;
 		return false;
 	} else if (error) {

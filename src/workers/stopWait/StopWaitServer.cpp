@@ -30,8 +30,8 @@ void StopWaitServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 	while(dataFeeder->hasNext()) {
 		struct packet_core_data packet_data = dataFeeder->getNextDataSegment();
 		struct packet packet = create_data_packet( &packet_data, seq_no);
-		tv.tv_sec = TIMEOUT;
-		tv.tv_usec = 0;
+		tv.tv_sec = TIMEOUT_SEC;
+		tv.tv_usec = TIMEOUT_MSEC;
 		gettimeofday(&sendTime, NULL);
 		bool sent;
 		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
@@ -42,8 +42,8 @@ void StopWaitServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 			sent = send_packet(sendSocket, clientAddr, &packet);
 		}
 		if (sent) {
-			tv.tv_sec = TIMEOUT;
-			tv.tv_usec = 0;
+			tv.tv_sec = TIMEOUT_SEC;
+			tv.tv_usec = TIMEOUT_MSEC;
 			struct timeval sendTime;
 			gettimeofday(&sendTime, NULL);
 			bad_pack:
@@ -55,8 +55,8 @@ void StopWaitServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 			}
 			if (time_out || mini_timeout) {
 				cout << "Time out occurred " << packet.seqno << endl;
-				tv.tv_sec = TIMEOUT;
-				tv.tv_usec = 0;
+				tv.tv_sec = TIMEOUT_SEC;
+				tv.tv_usec = TIMEOUT_MSEC;
 				struct timeval sendTime;
 				gettimeofday(&sendTime, NULL);
 				if (!resend_packet(sendSocket, clientAddr, packet, &seq_no, tv, sendTime, loss_prob)) {
@@ -95,8 +95,8 @@ bool StopWaitServer::resend_packet(int sendSocket, const struct sockaddr * clien
 			sent = send_packet(sendSocket, clientAddr, &packet);
 		}
 		if (sent) {
-			tv.tv_sec = TIMEOUT;
-			tv.tv_usec = 0;
+			tv.tv_sec = TIMEOUT_SEC;
+			tv.tv_usec = TIMEOUT_MSEC;
 			struct timeval sendTime;
 			gettimeofday(&sendTime, NULL);
 			bad_pack:

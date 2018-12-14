@@ -72,8 +72,8 @@ void GoBackServer::send_message(DataFeeder *dataFeeder, float loss_prob,
   
   bool GoBackServer::receive_ack(int sendSocket, unsigned int window) {
 	  struct timeval tv;
-	tv.tv_sec = TIMEOUT;
-	tv.tv_usec = 0;
+	tv.tv_sec = TIMEOUT_SEC;
+	tv.tv_usec = TIMEOUT_MSEC;
 	struct sockaddr_in clAddr;
 	bool mini_timeout = update_remaining_timeout_nc(&tv, &sendTime);
 	struct ack_packet ack_packet;
@@ -112,8 +112,8 @@ void GoBackServer::send_message(DataFeeder *dataFeeder, float loss_prob,
 bool GoBackServer::updateTimer (int sendSocket, const struct sockaddr * clientAddr, float loss_prob) {
 	
 		struct timeval tv;
-		tv.tv_sec = TIMEOUT;
-		tv.tv_usec = 0;
+		tv.tv_sec = TIMEOUT_SEC;
+		tv.tv_usec = TIMEOUT_MSEC;
 		bool mini_timeout = update_remaining_timeout_nc(&tv, &sendTime);
 		if (mini_timeout) {
 		    
