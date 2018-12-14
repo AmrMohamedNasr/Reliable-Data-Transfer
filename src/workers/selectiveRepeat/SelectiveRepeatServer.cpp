@@ -83,7 +83,11 @@ void SelectiveRepeatServer::send_message(DataFeeder *dataFeeder, float loss_prob
 
 bool SelectiveRepeatServer::updateTimers(int sendSocket, const struct sockaddr * clientAddr, float loss_prob) {
 	list<uint32_t>::iterator pack_id = sendOrder.begin();
+	unordered_set<uint32_t> resend_pack_ids;
 	while (pack_id  != sendOrder.end()) {
+		if (resend_pack_ids.find(*pack_id) != resend_pack_ids.end()) {
+			break;
+		}
 		pair<uint32_t, struct timeval> not_acked = *seqnums_sent.find(*pack_id);
 		struct timeval tv;
 		tv.tv_sec = TIMEOUT_SEC;
@@ -108,6 +112,7 @@ bool SelectiveRepeatServer::updateTimers(int sendSocket, const struct sockaddr *
 				pack_id = sendOrder.erase(pack_id);
 				sendOrder.push_back(packet.seqno);
 				sendOrderIterators[packet.seqno] = prev(sendOrder.end());
+				resend_pack_ids.insert(packet.seqno);
 			} else {
 				cout << "Error on sending packets..." << endl;
 				return false;

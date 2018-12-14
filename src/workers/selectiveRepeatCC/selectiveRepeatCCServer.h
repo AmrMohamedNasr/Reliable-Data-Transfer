@@ -16,6 +16,7 @@
 #include <netinet/in.h>
 #include <list>
 #include <unordered_map>
+#include <unordered_set>
 class SelectiveRepeatCCServer : public ServerWorker {
 	private:
 		uint32_t base_seq_no;

@@ -137,7 +137,11 @@ void SelectiveRepeatCCServer::send_message(DataFeeder *dataFeeder, float loss_pr
 bool SelectiveRepeatCCServer::updateTimers(int sendSocket, const struct sockaddr * clientAddr,
 		float loss_prob, unsigned int * window, unsigned int *ssthres, unsigned int *miniWin) {
 	list<uint32_t>::iterator pack_id = sendOrder.begin();
+	unordered_set<uint32_t> resend_packets_nums;
 	while (pack_id  != sendOrder.end()) {
+		if (resend_packets_nums.find(*pack_id) != resend_packets_nums.end()) {
+			break;
+		}
 		pair<uint32_t, struct timeval> not_acked = *seqnums_sent.find(*pack_id);
 		struct timeval tv;
 		tv.tv_sec = TIMEOUT_SEC;
@@ -164,6 +168,7 @@ bool SelectiveRepeatCCServer::updateTimers(int sendSocket, const struct sockaddr
 					pack_id = sendOrder.erase(pack_id);
 					sendOrder.push_back(packet.seqno);
 					sendOrderIterators[packet.seqno] = prev(sendOrder.end());
+					resend_packets_nums.insert(*pack_id);
 				} else {
 					cout << "Error on sending packets..." << endl;
 					return false;
