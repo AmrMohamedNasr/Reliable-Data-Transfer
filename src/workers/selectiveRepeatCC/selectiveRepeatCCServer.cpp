@@ -75,12 +75,8 @@ void SelectiveRepeatCCServer::send_message(DataFeeder *dataFeeder, float loss_pr
 	while(dataFeeder->hasNext()) {
 		if (base_seq_no + window > seq_no) {
 			struct packet packet;
-			if (out_of_window_packets.find(seq_no) == out_of_window_packets.end()) {
-				struct packet_core_data packet_data = dataFeeder->getNextDataSegment();
-				packet = create_data_packet( &packet_data, seq_no);
-			} else {
-				packet = out_of_window_packets[seq_no];
-			}
+			struct packet_core_data packet_data = dataFeeder->getNextDataSegment();
+			packet = create_data_packet( &packet_data, seq_no);
 			bool sent;
 			float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 			if (r < loss_prob) {
@@ -121,7 +117,7 @@ void SelectiveRepeatCCServer::send_message(DataFeeder *dataFeeder, float loss_pr
 			}
 		}
 	}
-	while(!seqnums_sent.empty()) {
+	while(!sendOrder.empty()) {
 		bool no_err = true;
 		while (no_err && hasData(sendSocket)) {
 			no_err = receive_ack(sendSocket, &window,
@@ -137,9 +133,9 @@ void SelectiveRepeatCCServer::send_message(DataFeeder *dataFeeder, float loss_pr
 bool SelectiveRepeatCCServer::updateTimers(int sendSocket, const struct sockaddr * clientAddr,
 		float loss_prob, unsigned int * window, unsigned int *ssthres, unsigned int *miniWin) {
 	list<uint32_t>::iterator pack_id = sendOrder.begin();
-	unordered_set<uint32_t> resend_packets_nums;
+	unordered_set<uint32_t> transKeys;
 	while (pack_id  != sendOrder.end()) {
-		if (resend_packets_nums.find(*pack_id) != resend_packets_nums.end()) {
+		if (transKeys.count(*pack_id) > 0) {
 			break;
 		}
 		pair<uint32_t, struct timeval> not_acked = *seqnums_sent.find(*pack_id);
@@ -168,7 +164,7 @@ bool SelectiveRepeatCCServer::updateTimers(int sendSocket, const struct sockaddr
 					pack_id = sendOrder.erase(pack_id);
 					sendOrder.push_back(packet.seqno);
 					sendOrderIterators[packet.seqno] = prev(sendOrder.end());
-					resend_packets_nums.insert(*pack_id);
+					transKeys.insert(packet.seqno);
 				} else {
 					cout << "Error on sending packets..." << endl;
 					return false;
@@ -238,10 +234,10 @@ bool SelectiveRepeatCCServer::receive_ack(int sendSocket, unsigned int* window,
 				base_seq_no++;
 				//cout << "forwarding window.\nBase Sequence Number = " << base_seq_no << endl;
 			}
-			seqnums_sent.erase(it);
 			data_sent.erase(data_sent.find(it->first));
 			sendOrder.erase(sendOrderIterators[it->first]);
 			sendOrderIterators.erase(sendOrderIterators.find(it->first));
+			seqnums_sent.erase(it);
 			if (dupAckIndex < dupAcks.size() && successAcks == dupAcks[dupAckIndex]) {
 				successAcks = 0;
 				dupAckIndex++;
@@ -260,6 +256,9 @@ void SelectiveRepeatCCServer::window_decrease(unsigned int *window, unsigned int
 	transmission_rounds_window.push_back(*window);
 	transmission_rounds.push_back(trans_round - 0.5);
 	*ssthres = *window / 2;
+	if (*ssthres == 0) {
+		*ssthres = 1;
+	}
 	*miniWin = 0;
 	if (timeout) {
 		*window = 1;
@@ -270,7 +269,7 @@ void SelectiveRepeatCCServer::window_decrease(unsigned int *window, unsigned int
 	transmission_rounds_window.push_back(*window);
 	transmission_rounds.push_back(trans_round);
 	trans_round++;
-	if (seq_no - 1 >= *window + base_seq_no) {
+	/*if (seq_no - 1 >= *window + base_seq_no) {
 		for (unsigned int i = seq_no - 1; i >= *window + base_seq_no; i--) {
 			if (data_sent.find(i) != data_sent.end()) {
 				out_of_window_packets[i] = data_sent[i];
@@ -281,5 +280,5 @@ void SelectiveRepeatCCServer::window_decrease(unsigned int *window, unsigned int
 			}
 		}
 		seq_no = *window + base_seq_no;
-	}
+	}*/
 }

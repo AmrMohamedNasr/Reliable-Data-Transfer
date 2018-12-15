@@ -34,10 +34,12 @@ class SelectiveRepeatCCServer : public ServerWorker {
 		float trans_round;
 		bool error;
 		bool time_out;
-		bool updateTimers(int sendSocket, const struct sockaddr * clientAddr, float loss_prob,
-				unsigned int *window, unsigned int *ssthres, unsigned int *miniWin);
-		bool receive_ack(int sendSocket, unsigned int *window, unsigned int *ssthres, unsigned int *miniWin);
-		void window_decrease(unsigned int *window, unsigned int *ssthres, unsigned int *miniWin, bool timeout);
+		bool updateTimers(int sendSocket, const struct sockaddr * clientAddr, float loss_prob, unsigned int *window, unsigned int *ssthres,
+				unsigned int *miniWin);
+		bool receive_ack(int sendSocket, unsigned int *window, unsigned int *ssthres,
+				unsigned int *miniWin);
+		void window_decrease(unsigned int *window, unsigned int *ssthres,
+				unsigned int *miniWin, bool timeout);
 	public:
 		vector<unsigned int> transmission_rounds_window;
 		vector<unsigned int> transmission_rounds_ssthres;

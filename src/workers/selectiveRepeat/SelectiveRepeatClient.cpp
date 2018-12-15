@@ -29,7 +29,8 @@ void SelectiveRepeatClient::recv_message(int socketFd, DataSink *sink, unsigned 
 		if (error || time_out) {
 			cout << "error occurred receiving packet" << endl;
 		} else if (verifyChecksum(&packet)) {
-			if (packet.seqno < base_ack_no && packet.seqno >= base_ack_no - window) {
+			uint32_t minPack = base_ack_no > window ? base_ack_no - window : 0;
+			if (packet.seqno < base_ack_no && packet.seqno >= minPack) {
 				struct ack_packet ack_packet = create_ack_packet(packet.seqno);
 				send_ack_packet(socketFd, (const struct sockaddr *)&src_addr, &ack_packet);
 			} else if (! (packet.seqno < base_ack_no) && ! (packet.seqno >= base_ack_no + window)) {
