@@ -10,7 +10,7 @@
 
 #define RETRIES	3
 #define TIMEOUT_SEC	0
-#define TIMEOUT_MSEC 10
+#define TIMEOUT_MSEC 1000
 #define TIMEOUT_CLIENT 20
 #define	PCK_DATA_SIZE	512
 #define PCK_HEADER_SIZE	8

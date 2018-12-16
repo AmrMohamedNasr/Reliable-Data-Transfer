@@ -81,13 +81,13 @@ void Server::start(PROTO_TYPE type) {
 	}
 	cout << "Listening on port : " << this->port << endl;
 	struct sockaddr_in clientAddr;
+	srand(this->seed);
 	while (1) {
 		memset(&clientAddr, 0, sizeof(struct sockaddr_in));
 		struct packet pck = receive_packet(listenSocket,(struct sockaddr *)&clientAddr);
 		pid_t pid = fork();
 		if (pid == 0) {
 			pid = getpid();
-			srand(this->seed);
 			cout << pid << " : Handling Request : " << inet_ntoa(clientAddr.sin_addr) << ":"
 								<< ntohs(clientAddr.sin_port) << endl;
 			int ntry = 0;
